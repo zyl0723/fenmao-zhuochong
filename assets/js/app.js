@@ -146,6 +146,44 @@
       return out;
     },
 
+    // ---------- 大世界：谜题 ----------
+    puzzleDone: function (id) {
+      return !!(this.state.puzzlesDone && this.state.puzzlesDone[id]);
+    },
+    setFlag: function (key, value) {
+      if (!this.state.worldFlags) this.state.worldFlags = {};
+      this.state.worldFlags[key] = value === undefined ? true : value;
+      this.save();
+      this.emit();
+    },
+    flag: function (key) {
+      return !!(this.state.worldFlags && this.state.worldFlags[key]);
+    },
+    addGem: function (n) {
+      this.state.gems = (this.state.gems || 0) + (n || 1);
+      return this.state.gems;
+    },
+    completePuzzle: function (def) {
+      if (!this.state.puzzlesDone) this.state.puzzlesDone = {};
+      var first = !this.state.puzzlesDone[def.id];
+      var out = { first: first, fish: 0, xp: 0, levels: 0, achievements: [], gem: 0 };
+      if (!first) return out;
+      this.state.puzzlesDone[def.id] = true;
+      var rw = def.reward || {};
+      out.fish = rw.fish == null ? 6 : rw.fish;
+      out.xp = rw.xp == null ? 30 : rw.xp;
+      this.addFish(out.fish);
+      out.levels = this.addXp(out.xp);
+      this.addIntimacy(2);
+      if (rw.gem) out.gem = this.addGem(1);
+      if (def.onSolveFlag) this.setFlag(def.onSolveFlag, true);
+      if (out.levels > 0) { this.addFish(5); this.react('levelup'); }
+      else this.react('love');
+      out.achievements = this.checkAchievements();
+      this.save();
+      return out;
+    },
+
     // ---------- 猫猫 ----------
     feed: function (itemId) {
       var item = null;

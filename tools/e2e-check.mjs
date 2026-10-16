@@ -55,26 +55,26 @@ await evalJs('CC.UI.openLesson("L1")');
 await sleep(300);
 const solution = '#include <stdio.h>\n\nint main() {\n    printf("你好，我是小明！\\n");\n    return 0;\n}\n';
 await evalJs('CC.UI.editors["L1-T1"].setValue(' + JSON.stringify(solution) + ')');
-await evalJs('[...document.querySelectorAll("#task-L1-T1 button")].find(b => b.textContent.includes("提交检查")).click()');
+await evalJs('[...document.querySelectorAll("#task-L1-T1 button")].find(b => b.textContent.includes("交给捉虫看看")).click()');
 await sleep(1200);
 const afterPass = JSON.parse(await evalJs('JSON.stringify({ fb: [...document.querySelectorAll("#task-L1-T1 .feedback")].filter(function(e){return !e.classList.contains("hidden");}).map(function(e){return e.textContent;}).join(" "), fish: CC.App.state.fish, done: !!CC.App.state.completedTasks["L1-T1"], xp: CC.App.state.xp })'));
-check('正确答案能通过判题', afterPass.fb.includes('全部通过'), afterPass.fb.slice(0, 60).replace(/\n/g, ' '));
+check('正确答案能通过判题', afterPass.fb.includes('过啦'), afterPass.fb.slice(0, 60).replace(/\n/g, ' '));
 check('通过后记录了完成状态', afterPass.done === true);
 check('通过后拿到了小鱼干和经验', afterPass.fish > b.fish && afterPass.xp > 0, 'fish=' + afterPass.fish + ' xp=' + afterPass.xp);
 
 // 3. 错误答案会被指出问题
 await evalJs('CC.UI.editors["L1-T2"].setValue("#include <stdio.h>\\n\\nint main() {\\n    printf(\\"错的答案\\n\\");\\n    return 0;\\n}\\n")');
-await evalJs('[...document.querySelectorAll("#task-L1-T2 button")].find(b => b.textContent.includes("提交检查")).click()');
+await evalJs('[...document.querySelectorAll("#task-L1-T2 button")].find(b => b.textContent.includes("交给捉虫看看")).click()');
 await sleep(900);
 const afterFail = JSON.parse(await evalJs('JSON.stringify({ fb: [...document.querySelectorAll("#task-L1-T2 .feedback")].filter(function(e){return !e.classList.contains("hidden");}).map(function(e){return e.textContent;}).join(" "), done: !!CC.App.state.completedTasks["L1-T2"] })'));
-check('错误答案不会通过', afterFail.fb.includes('还差一点点') && afterFail.done === false);
+check('错误答案不会通过', afterFail.fb.includes('歪着头') && afterFail.done === false);
 
 // 4. 捉虫关卡：修好 B1
 await evalJs('CC.UI.showView("bugs"); CC.UI.openBug("B1")');
 await sleep(400);
 const fixed = '#include <stdio.h>\n\nint main() {\n    printf("第一行\\n");\n    printf("第二行\\n");\n    printf("第三行\\n");\n    return 0;\n}\n';
 await evalJs('CC.UI.editors["B1"].setValue(' + JSON.stringify(fixed) + ')');
-await evalJs('[...document.querySelectorAll("#task-B1 button")].find(b => b.textContent.includes("提交检查")).click()');
+await evalJs('[...document.querySelectorAll("#task-B1 button")].find(b => b.textContent.includes("交给捉虫看看")).click()');
 await sleep(1000);
 const bug = JSON.parse(await evalJs('JSON.stringify({ fb: [...document.querySelectorAll("#task-B1 .feedback")].filter(function(e){return !e.classList.contains("hidden");}).map(function(e){return e.textContent;}).join(" "), fixed: !!CC.App.state.bugsFixed["B1"], fish: CC.App.state.fish })'));
 check('捉虫关卡修好后通过', bug.fb.includes('修好啦') && bug.fixed === true, 'fish=' + bug.fish);

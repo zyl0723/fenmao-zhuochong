@@ -31,8 +31,8 @@
   UI.rewardToasts = function (out, kind) {
     if (!out) return;
     if (out.first) {
-      this.toast(kind === 'bug' ? '捉到一只虫！🐛' : '任务完成！🎉',
-        '小鱼干 +' + out.fish + '　经验 +' + out.xp + '　亲密度 +1');
+      this.toast(kind === 'bug' ? '捉到一只虫！🐛' : (kind === 'puzzle' ? '谜题解开啦！🎉' : '这个小试炼过啦！🎉'),
+        '🐟 小鱼干 +' + out.fish + '　⭐ 经验 +' + out.xp + '　❤️ 亲密度 +1');
     }
     if (out.levels > 0) {
       this.toast('捉虫升级啦！', '现在是 Lv.' + CC.App.level().level + '「' + CC.App.level().title + '」，额外奖励小鱼干 +5');
@@ -53,7 +53,7 @@
     var titleRow = el('h3');
     titleRow.appendChild(el('span', null, task.title || '任务'));
     if (task.difficulty) titleRow.appendChild(el('span', 'tag star', '难度 ' + new Array(task.difficulty + 1).join('★')));
-    var doneTag = el('span', 'tag' + (isBug ? (CC.App.isBugDone(task.id) ? ' done' : '') : (CC.App.isTaskDone(task.id) ? ' done' : '')), '未完成');
+    var doneTag = el('span', 'tag' + (isBug ? (CC.App.isBugDone(task.id) ? ' done' : '') : (CC.App.isTaskDone(task.id) ? ' done' : '')), '还没过');
     doneTag.setAttribute('data-done', '1');
     titleRow.appendChild(doneTag);
     if (isBug) {
@@ -78,27 +78,27 @@
     this.editors[task.id] = editor;
 
     var stdinRow = el('div', 'stdin-row');
-    stdinRow.appendChild(el('label', null, '程序输入'));
+    stdinRow.appendChild(el('label', null, '喂给程序的输入'));
     var stdinInput = el('input');
     stdinInput.type = 'text';
     var sample = task.sampleStdin !== undefined ? task.sampleStdin
       : ((task.tests && task.tests[0] && task.tests[0].stdin) || '');
     stdinInput.value = String(sample).replace(/\n/g, ' ');
-    stdinInput.placeholder = '运行时要输入的内容，例如 3 4';
+    stdinInput.placeholder = '程序要吃的输入，例如 3 4';
     stdinRow.appendChild(stdinInput);
     card.appendChild(stdinRow);
 
     var btnRow = el('div', 'row');
     btnRow.style.marginTop = '10px';
-    var runBtn = el('button', 'btn primary', '▶ 运行');
+    var runBtn = el('button', 'btn primary', '▶ 试一试');
     runBtn.type = 'button';
-    var submitBtn = el('button', 'btn mint', '✔ 提交检查');
+    var submitBtn = el('button', 'btn mint', '✔ 交给捉虫看看');
     submitBtn.type = 'button';
-    var hintBtn = el('button', 'btn small ghost', '💡 给点提示');
+    var hintBtn = el('button', 'btn small ghost', '💡 猫猫提示');
     hintBtn.type = 'button';
-    var solBtn = el('button', 'btn small ghost', '👀 看参考答案');
+    var solBtn = el('button', 'btn small ghost', '👀 偷偷看一眼答案');
     solBtn.type = 'button';
-    var resetBtn = el('button', 'btn small ghost', '↺ 恢复初始代码');
+    var resetBtn = el('button', 'btn small ghost', '↺ 从头再来');
     resetBtn.type = 'button';
     btnRow.appendChild(runBtn);
     btnRow.appendChild(submitBtn);
@@ -110,7 +110,7 @@
 
     var consoleBox = el('div', 'console');
     var outBox = el('div', 'console-out');
-    outBox.appendChild(el('span', 'ph', '点「运行」看看程序说了什么～'));
+    outBox.appendChild(el('span', 'ph', '点一下「试一试」，看看程序说了什么～'));
     consoleBox.appendChild(outBox);
 
     var warnBox = el('div', 'feedback info hidden');
@@ -121,7 +121,7 @@
 
     var hintBox = el('div', 'solution-box hidden');
     var hintUl = el('ul', 'hint-list');
-    hintBox.appendChild(el('div', 'tiny muted', '小提示（先自己想想，再看提示效果更好）'));
+    hintBox.appendChild(el('div', 'tiny muted', '猫猫提示（先自己想想，再看更有效）'));
     hintBox.appendChild(hintUl);
     consoleBox.appendChild(hintBox);
 
@@ -130,7 +130,7 @@
     card.appendChild(consoleBox);
 
     function setTag(done) {
-      doneTag.textContent = done ? '已完成 ✓' : '未完成';
+      doneTag.textContent = done ? '过啦 ✓' : '还没过';
       doneTag.className = 'tag' + (done ? ' done' : '');
     }
 
@@ -201,7 +201,7 @@
       fbBox.classList.remove('hidden');
       if (res.pass) {
         fbBox.className = 'feedback ok';
-        fbBox.appendChild(el('div', 'fb-title', isBug ? '🎉 修好啦！虫子被你抓住了' : '✅ 全部通过，太棒了！'));
+        fbBox.appendChild(el('div', 'fb-title', isBug ? '🎉 修好啦！虫子被你抓住了' : '🎉 过啦！捉虫开心地打了个滚'));
         var out = isBug ? CC.App.fixBug(task) : CC.App.completeTask(task);
         var extra = el('div', null, out.first
           ? '捉虫得到了 🐟 × ' + out.fish + ' 和 ⭐ × ' + out.xp
@@ -213,7 +213,7 @@
         self.refresh();
       } else {
         fbBox.className = 'feedback bad';
-        fbBox.appendChild(el('div', 'fb-title', '还差一点点'));
+        fbBox.appendChild(el('div', 'fb-title', '🐱 捉虫歪着头看了一会儿…'));
         fbBox.appendChild(el('div', null, res.message));
         if (res.results && res.results.length) {
           var ul = el('ul', 'warn-list');
@@ -224,7 +224,7 @@
           fbBox.appendChild(ul);
         }
         if (task.hints && task.hints.length) {
-          fbBox.appendChild(el('div', 'tiny', '卡住了？可以点「💡 给点提示」。'));
+          fbBox.appendChild(el('div', 'tiny', '卡住了？让它给你点「💡 猫猫提示」吧。'));
         }
       }
     }
@@ -244,7 +244,7 @@
       solBox.classList.toggle('hidden');
       if (showing) {
         clear(solBox);
-        solBox.appendChild(el('div', 'tiny muted', '参考答案（看懂思路比抄下来更重要）'));
+        solBox.appendChild(el('div', 'tiny muted', '答案在这儿（看懂思路比抄下来更重要）'));
         solBox.appendChild(self.codeBlock('参考答案', task.solution || task.fixed || '（暂无）'));
       }
     });

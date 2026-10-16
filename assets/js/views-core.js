@@ -40,7 +40,7 @@
       CC.App.onChange(function () { self.refresh(); });
       this.buildNav();
       this.buildViews();
-      this.showView('map');
+      this.showView('world');
       this.refresh();
       return this;
     },
@@ -50,12 +50,13 @@
       var nav = $('nav');
       clear(nav);
       var items = [
-        ['map', '学习地图'],
+        ['world', '🗺️ 世界冒险'],
+        ['map', '📖 故事书'],
         ['lesson', '继续上课'],
-        ['bugs', '捉虫挑战'],
-        ['playground', '自由练习'],
-        ['room', '猫窝'],
-        ['about', '关于 / 署名']
+        ['bugs', '🐛 虫虫洞'],
+        ['playground', '🧪 练习场'],
+        ['room', '🏠 猫窝'],
+        ['about', 'ℹ️ 关于']
       ];
       for (var i = 0; i < items.length; i++) {
         (function (key, label) {
@@ -74,6 +75,8 @@
     },
 
     showView: function (name) {
+      var prev = this.currentView;
+      if (prev === 'world' && name !== 'world' && CC.WorldView) CC.WorldView.leave();
       this.currentView = name;
       var views = doc.querySelectorAll('.view');
       for (var i = 0; i < views.length; i++) {
@@ -84,6 +87,7 @@
         var k = btns[j].getAttribute('data-view');
         btns[j].classList.toggle('on', k === name || (k === 'lesson' && name === 'lesson'));
       }
+      if (name === 'world' && CC.WorldView) CC.WorldView.enter();
       if (name === 'lesson') this.renderLessonContent();
       if (name === 'room') this.renderRoom();
       if (name === 'about') this.renderAbout();
@@ -116,6 +120,7 @@
       this.renderPetPanel();
       if (this.currentLessonId) this.renderLessonNav();
       if (this.currentView === 'room') this.renderRoom();
+      if (this.currentView === 'world' && CC.WorldView) CC.WorldView.refresh();
       if (this.currentView === 'bugs') this.renderBugList();
     },
 
@@ -131,7 +136,7 @@
         var st = CC.App.state;
         var lv = CC.App.level();
         var msg = '';
-        if (CC.App.doneCount() === 0) msg = '欢迎来到粉猫捉虫！我是捉虫，一只爱吃小鱼干的像素猫。你写代码，我就有饭吃～';
+        if (CC.App.doneCount() === 0) msg = '我是捉虫！在大世界里到处走走，点一点身边的东西，就能发现编程的秘密～';
         else if (st.hunger < 25) msg = '喵…我有点饿了。写代码赚点小鱼干喂我好不好？';
         else if (lv.level >= 8) msg = '你已经是很厉害的 C 语言猫啦！要不要去捉虫挑战里练练手？';
         else msg = '你回来啦！已完成 ' + CC.App.doneCount() + ' / ' + CC.App.totalTasks() + ' 个任务，继续加油～';
@@ -231,7 +236,7 @@
       head.appendChild(meta);
       if (lesson.goals && lesson.goals.length) {
         var ul = el('ul', 'goal-list');
-        head.appendChild(el('div', 'tiny muted', '学完这一课，你会：'));
+        head.appendChild(el('div', 'tiny muted', '读完这页，你就会：'));
         for (var g = 0; g < lesson.goals.length; g++) ul.appendChild(el('li', null, lesson.goals[g]));
         head.appendChild(ul);
       }
@@ -241,8 +246,8 @@
       for (var i = 0; i < sections.length; i++) host.appendChild(this.renderSection(sections[i]));
 
       var taskHead = el('div', 'lesson-head');
-      taskHead.appendChild(el('h2', null, '动手练一练'));
-      taskHead.appendChild(el('div', 'sub', '一共 ' + lesson.tasks.length + ' 个任务。通过任务可以给捉虫赚小鱼干，也可以给它买玩具和装扮。'));
+      taskHead.appendChild(el('h2', null, '🧩 试炼场'));
+      taskHead.appendChild(el('div', 'sub', '这一课有 ' + lesson.tasks.length + ' 个小试炼。通过一个，捉虫就多一条小鱼干。'));
       host.appendChild(taskHead);
 
       for (var t = 0; t < lesson.tasks.length; t++) {

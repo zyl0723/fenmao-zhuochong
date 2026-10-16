@@ -68,7 +68,13 @@
     { id: 'streak_3', title: '三天打鱼', desc: '连续 3 天来学习', fish: 10, check: function (s) { return s.streak.days >= 3; } },
     { id: 'streak_7', title: '一周坚持', desc: '连续 7 天来学习', fish: 25, check: function (s) { return s.streak.days >= 7; } },
     { id: 'night_owl', title: '深夜代码猫', desc: '在 0:00 ~ 5:00 之间写代码', fish: 8, check: function (s) { return !!s.flags.nightOwl; } },
-    { id: 'run_50', title: '反复试验', desc: '累计运行代码 50 次', fish: 12, check: function (s) { return s.stats.runs >= 50; } }
+    { id: 'run_50', title: '反复试验', desc: '累计运行代码 50 次', fish: 12, check: function (s) { return s.stats.runs >= 50; } },
+    { id: 'first_puzzle', title: '会动脑的小猫', desc: '在大世界里解开第一个谜题', fish: 5, check: function (s) { return count(s.puzzlesDone || {}) >= 1; } },
+    { id: 'five_puzzles', title: '世界旅行者', desc: '解开 5 个世界谜题', fish: 15, check: function (s) { return count(s.puzzlesDone || {}) >= 5; } },
+    { id: 'all_puzzles', title: '把世界都点亮', desc: '解开全部世界谜题', fish: 30, check: function (s) { return count(s.puzzlesDone || {}) >= 9; } },
+    { id: 'garden_bloom', title: '花开满园', desc: '让机器人把花园的花全部浇开', fish: 8, check: function (s) { return !!(s.worldFlags && s.worldFlags.robotDone); } },
+    { id: 'bridge_fixed', title: '修桥小能手', desc: '集齐 3 颗宝石修好木桥', fish: 10, check: function (s) { return !!(s.worldFlags && s.worldFlags.bridgeFixed); } },
+    { id: 'graduated', title: '毕业啦', desc: '点亮灯塔，从小猫学堂毕业', fish: 50, check: function (s) { return !!(s.badges && s.badges.graduated); } }
   ];
 
   function count(obj) {
@@ -105,6 +111,11 @@
       equipped: { bow: false, star: false },
       completedTasks: {},
       bugsFixed: {},
+      puzzlesDone: {},          // 大世界里的谜题
+      gems: 0,                  // 宝石（修桥用）
+      worldFlags: {},           // 桥修好了 / 花园开花了 / 大门开了…
+      badges: {},               // 毕业徽章等
+      world: { area: 'home', x: 6.5, y: 8.4, dir: 'down' },
       achievements: {},
       streak: { days: 1, lastDay: today() },
       flags: {},

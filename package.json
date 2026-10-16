@@ -1,7 +1,7 @@
 {
   "name": "fenmao-zhuochong",
   "version": "1.0.0",
-  "description": "粉猫捉虫 · 面向零基础学习者的 C 语言互动学堂（纯静态，零依赖）",
+  "description": "粉猫捉虫 · 用游戏的方式学 C 语言：像素猫大世界 + 互动谜题 + 内置迷你 C 解释器（纯静态，零依赖）",
   "type": "module",
   "private": true,
   "license": "MIT",
@@ -9,17 +9,22 @@
     "serve": "node tools/dev-server.mjs 5173",
     "test": "node tests/run-all.mjs",
     "art": "node tools/render-art.mjs",
-    "shot": "node tools/shot.mjs http://localhost:5173/index.html tools/preview-page.png 1440 1000",
-    "e2e": "node tools/e2e-check.mjs http://localhost:5173"
+    "art:world": "node tools/render-world.mjs",
+    "shot": "node tools/shot.mjs http://localhost:5173/index.html docs/preview-shot.png 1200 900",
+    "e2e": "node tools/e2e-check.mjs http://localhost:5173",
+    "e2e:world": "node tools/e2e-world.mjs http://localhost:5173",
+    "e2e:live": "node tools/e2e-world.mjs https://zyl0723.github.io/fenmao-zhuochong"
   },
   "keywords": [
     "c",
     "c-language",
     "learn-to-code",
     "education",
-    "pixel-art",
     "game",
-    "interpreter"
+    "pixel-art",
+    "adventure",
+    "interpreter",
+    "zero-dependency"
   ],
   "engines": {
     "node": ">=18"

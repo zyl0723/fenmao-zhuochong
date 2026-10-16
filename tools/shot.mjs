@@ -57,6 +57,8 @@ await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFac
 await send('Page.enable');
 await send('Page.navigate', { url });
 await sleep(waitMs);
+const beforeExpr = process.argv[10] || '';
+if (beforeExpr) { await send('Runtime.evaluate', { expression: beforeExpr, returnByValue: true }); await sleep(1200); }
 const scrollY = Number(process.argv[7] || 0);
 const viewportOnly = process.argv[8] === 'viewport';
 if (scrollY) {

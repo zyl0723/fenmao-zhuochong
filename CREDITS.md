@@ -14,13 +14,16 @@
 | 16 课课程内容与 57 个练习任务 | 本仓库原创撰写，题目与参考答案均由 `tests/content.test.mjs` 自动校验 |
 | 12 个捉虫关卡 | 本仓库原创设计 |
 | 猫猫养成数值（等级 / 食物 / 装扮 / 成就） | 本仓库原创 |
+| 大世界玩法（四张地图、走路探索、世界状态会变） | 本仓库原创 |
+| 十个互动谜题与它们用的比喻（罐子=变量、抽屉=数组、抽屉里的抽屉=文件夹、机器人=循环、绳子=指针、珠子+隐形珠子=字符串…） | 本仓库原创 |
 
 ## 二、灵感与参考（未复制其代码或文字）
 
 | 项目 / 资料 | 我们参考了什么 | 许可 |
 | --- | --- | --- |
 | [JSCPP](https://github.com/felixhao28/JSCPP) | 参考了「用 JavaScript 在浏览器里解释 C 语言」这一思路的可行性；本项目**没有**使用它的代码 | MIT |
-| [CodeCombat](https://codecombat.com/) / [Screeps](https://screeps.com/) 等编程闯关游戏 | 参考了「用游戏化与角色陪伴来降低编程学习门槛」的产品思路 | 各自许可 |
+| [CodeCombat](https://codecombat.com/) / [Screeps](https://screeps.com/) 等编程闯关游戏 | 参考了「用游戏化与角色陪伴来降低编程学习门槛」的产品思路；「在真实世界场景里用比喻讲编程概念」的呈现方式也受这类作品启发 | 各自许可 |
+| 《hello world 里的计算机原理》一类的科普读物 | 「抽屉 / 罐子 / 传送带」这类实物比喻的灵感来源（未复制任何文字） | 书籍版权归作者 |
 | [菜鸟教程 C 语言教程](https://www.runoob.com/cprogramming/c-tutorial.html)、[cppreference](https://zh.cppreference.com/) | 语法细节与常见错误的核对参考（例如整数除法、`scanf` 的 `&`、数组下标越界） | 各自许可 |
 | 《C 程序设计语言》(K&R) | 课程顺序与知识点取舍的参考方向 | 书籍版权归作者与出版社 |
 | [GitHub Primer / Shields.io](https://shields.io/) | README 徽章的常见写法参考 | CC0 / MIT |

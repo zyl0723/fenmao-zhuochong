@@ -19,7 +19,10 @@
       CC.PetArt.drawSprite(bctx, 'face', 3, 0, 0);
     }
 
-    // 学习地图上的大猫
+    // 大世界（游戏主场）
+    if (CC.WorldView) CC.WorldView.build();
+
+    // 故事书里的大猫
     var mapCat = doc.getElementById('map-cat');
     if (mapCat) {
       CC.UI.pets.hero = CC.App.registerPet(new CC.Pet(mapCat, { scale: 4 }));
@@ -69,7 +72,7 @@
       if (!h) return;
       if (h.indexOf('lesson-') === 0) { CC.UI.openLesson(h.slice(7)); return; }
       if (h.indexOf('bug-') === 0) { CC.UI.showView('bugs'); CC.UI.openBug(h.slice(4)); return; }
-      if (['map', 'lesson', 'bugs', 'playground', 'room', 'about'].indexOf(h) >= 0) { CC.UI.showView(h); return; }
+      if (['world', 'map', 'lesson', 'bugs', 'playground', 'room', 'about'].indexOf(h) >= 0) { CC.UI.showView(h); return; }
     }
     applyHash();
     root.addEventListener('hashchange', applyHash);

@@ -11,7 +11,11 @@ const FILES = [
   'assets/js/content-lessons-2.js',
   'assets/js/content-lessons-3.js',
   'assets/js/content-lessons-4.js',
-  'assets/js/content-bugs.js'
+  'assets/js/content-bugs.js',
+  'assets/js/world-art.js',
+  'assets/js/world-data.js',
+  'assets/js/puzzles.js',
+  'assets/js/puzzles-b.js'
 ].filter(f => fs.existsSync(path.join(ROOT, f)));
 
 const sandbox = { console };
@@ -107,6 +111,95 @@ describe('捉虫关卡检查', () => {
       });
     });
   }
+});
+
+describe('大世界地图与谜题', () => {
+  const WD = CC.WorldData;
+  const Puzzles = CC.Puzzles;
+
+  test('世界里有 4 个区域，每个区域都能读出来', () => {
+    ok(WD && WD.Area, '没有找到 WorldData');
+    const ids = WD.Area.ids();
+    ok(ids.length >= 4, '区域太少：' + ids.join(', '));
+    ids.forEach(id => {
+      const a = WD.Area.get(id);
+      ok(a && a.rows && a.rows.length, id + ' 读不出来');
+      ok(a.name && a.spawn, id + ' 缺少名字或出生点');
+    });
+  });
+
+  test('每个区域的地图都是规整的矩形，字符都在图例里', () => {
+    WD.Area.ids().forEach(id => {
+      const a = WD.Area.get(id);
+      const w = a.size.w;
+      eq(a.rows.length, a.size.h, id + ' 行数和 size.h 不一致');
+      a.rows.forEach((row, y) => {
+        eq(row.length, w, id + ' 第 ' + (y + 1) + ' 行宽度不对');
+        for (const ch of row) {
+          ok(WD.LEGEND[ch], id + ' 里出现了图例没有的字符：' + ch);
+        }
+      });
+    });
+  });
+
+  test('出生点踩在能走的地方', () => {
+    WD.Area.ids().forEach(id => {
+      const a = WD.Area.get(id);
+      const tiles = WD.Area.decode(a.rows);
+      const tx = Math.floor(a.spawn.x), ty = Math.floor(a.spawn.y);
+      ok(tx >= 0 && tx < a.size.w && ty >= 0 && ty < a.size.h, id + ' 的出生点跑到地图外面了');
+      ok(WD.walkable(tiles[ty][tx]), id + ' 的出生点落在不能走的地形上：' + tiles[ty][tx]);
+    });
+  });
+
+  test('物件坐标都在地图范围内', () => {
+    WD.Area.ids().forEach(id => {
+      const a = WD.Area.get(id);
+      (a.objects || []).forEach(o => {
+        ok(o.kind, id + ' 里有物件缺少 kind');
+        ok(o.x >= 0 && o.x < a.size.w && o.y >= 0 && o.y < a.size.h,
+          id + ' 的物件 ' + (o.id || o.kind) + ' 坐标越界：' + o.x + ',' + o.y);
+        if (o.to) ok(WD.Area.has(o.to), id + ' 的物件 ' + o.id + ' 通向不存在的区域 ' + o.to);
+        if (o.puzzle) ok(Puzzles.get(o.puzzle), id + ' 的物件 ' + o.id + ' 指向不存在的谜题 ' + o.puzzle);
+      });
+    });
+  });
+
+  test('谜题都写全了（标题、猫的话、隐喻、玩法）', () => {
+    const ids = Puzzles.ids();
+    ok(ids.length >= 9, '谜题太少：' + ids.length);
+    ids.forEach(pid => {
+      const d = Puzzles.get(pid);
+      ok(d.id && d.title, pid + ' 缺少标题');
+      ok(d.cat && d.cat.length, pid + ' 缺少小猫的话');
+      ok(d.metaphor, pid + ' 缺少「像什么」的说明');
+      ok(typeof d.build === 'function', pid + ' 缺少玩法');
+      ok(d.reward, pid + ' 缺少奖励设置');
+    });
+  });
+
+  test('每个谜题对应的编程挑战都是真实存在的任务', () => {
+    const links = Puzzles.TASK_LINKS || {};
+    const all = {};
+    LESSONS.forEach(l => l.tasks.forEach(t => { all[t.id] = true; }));
+    BUGS.forEach(b => { all[b.id] = true; });
+    Object.keys(links).forEach(pid => {
+      ok(Puzzles.get(pid), 'TASK_LINKS 里的 ' + pid + ' 不是一个谜题');
+      const tid = links[pid];
+      if (tid) ok(all[tid], pid + ' 对应的任务 ' + tid + ' 不存在');
+    });
+  });
+
+  test('世界里的谜题都有对应的课程试炼或说明', () => {
+    const links = Puzzles.TASK_LINKS || {};
+    WD.Area.ids().forEach(id => {
+      (WD.Area.get(id).objects || []).forEach(o => {
+        if (!o.puzzle) return;
+        if (['books', 'bag', 'feed', 'bridge', 'boat', 'sleep', 'cave'].indexOf(o.puzzle) >= 0) return;  // 工具类的不需要试炼
+        ok(links[o.puzzle], '谜题 ' + o.puzzle + ' 还没有配「自己写一遍」的课程试炼');
+      });
+    });
+  });
 });
 
 // 顺便检查一下起始代码是不是“太善良”（直接就能通过）

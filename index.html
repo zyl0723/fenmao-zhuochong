@@ -45,14 +45,24 @@ window.addEventListener('error', function (e) {
 <main class="wrap">
   <div id="boot-error" class="card hidden" style="border-color:#f0c2cc;color:#a4425a"></div>
 
-  <!-- 学习地图 -->
-  <section id="view-map" class="view on">
+  <!-- 大世界（游戏主场） -->
+  <section id="view-world" class="view on">
+    <div class="view-head">
+      <h2>🗺️ 捉虫的大世界</h2>
+      <p>你就是小猫「捉虫」。带着它到处走走，用 <b>方向键 / WASD</b> 走路，靠近东西按 <b>空格</b>（手机上按 A）和它说话。
+        抽屉、机器、花儿、大门里，都藏着编程的秘密。</p>
+    </div>
+    <div id="world-root"></div>
+  </section>
+
+  <!-- 学习地图（故事书目录） -->
+  <section id="view-map" class="view">
     <div class="hero">
       <canvas id="map-cat" width="128" height="128"></canvas>
       <div class="hero-body">
-        <h2>写代码，养小猫 🐱</h2>
-        <p class="muted">从「什么是程序」开始，一步一步学会 C 语言。你在网页里写代码、点一下就能运行；
-          每通过一个任务，捉虫就能吃到小鱼干。</p>
+        <h2>📖 故事书：十六课，一课一件事</h2>
+        <p class="muted">大世界里的谜题玩的是「感觉」，故事书讲的是「为什么」。想学得更扎实时，就翻开一本书读一读，
+          每本书最后都有几个小试炼。</p>
         <div class="speech" id="map-speech">正在认识捉虫…</div>
         <div class="hero-stats" id="map-stats"></div>
       </div>
@@ -156,6 +166,7 @@ window.addEventListener('error', function (e) {
 <!-- 运行顺序：解释器 → 宠物画稿 → 存档 → 判题 → 课程内容 → 界面 -->
 <script src="assets/js/interpreter.js"></script>
 <script src="assets/js/pet-art.js"></script>
+<script src="assets/js/world-art.js"></script>
 <script src="assets/js/store.js"></script>
 <script src="assets/js/pet.js"></script>
 <script src="assets/js/grader.js"></script>
@@ -164,11 +175,16 @@ window.addEventListener('error', function (e) {
 <script src="assets/js/content-lessons-3.js"></script>
 <script src="assets/js/content-lessons-4.js"></script>
 <script src="assets/js/content-bugs.js"></script>
+<script src="assets/js/world-data.js"></script>
+<script src="assets/js/world.js"></script>
+<script src="assets/js/puzzles.js"></script>
+<script src="assets/js/puzzles-b.js"></script>
 <script src="assets/js/editor.js"></script>
 <script src="assets/js/app.js"></script>
 <script src="assets/js/views-core.js"></script>
 <script src="assets/js/views-tasks.js"></script>
 <script src="assets/js/views-more.js"></script>
+<script src="assets/js/views-world.js"></script>
 <script src="assets/js/main.js"></script>
 </body>
 </html>

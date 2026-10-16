@@ -74,11 +74,13 @@
     sad: ['####', 'PPPP', 'PPPP', 'PPPP'],
     sleep: ['PPPP', '####', 'PPPP', 'PPPP'],
     closed: ['PPPP', '####', 'PPPP', 'PPPP'],
-    sparkle: ['WPPP', 'PYYY', 'YYYW', 'PWPP']
+    sparkle: ['WPPP', 'PYYY', 'YYYW', 'PWPP'],
+    none: ['PPPP', 'PPPP', 'PPPP', 'PPPP']
   };
 
   // 嘴巴区域：行 18~19，列 14~17
   var MOUTHS = {
+    none: ['LLLL', 'LLLL'],
     normal: null,
     open: ['MMMM', 'LMML'],
     smile: ['LMML', 'MMMM'],
@@ -96,7 +98,11 @@
     sleep: { eyes: 'sleep', mouth: 'small', extras: [{ sprite: 'zzz', row: 6, col: 22 }] },
     sad: { eyes: 'sad', mouth: 'sad', extras: [{ sprite: 'sweat', row: 9, col: 24 }] },
     love: { eyes: 'happy', mouth: 'smile', extras: [{ sprite: 'heart', row: 6, col: 26 }, { sprite: 'heart', row: 10, col: 1 }] },
-    dizzy: { eyes: 'sparkle', mouth: 'wide', extras: [{ sprite: 'sparkle', row: 4, col: 2 }, { sprite: 'sparkle', row: 8, col: 27 }] }
+    dizzy: { eyes: 'sparkle', mouth: 'wide', extras: [{ sprite: 'sparkle', row: 4, col: 2 }, { sprite: 'sparkle', row: 8, col: 27 }] },
+    // 大世界里用到：背影（往上看）、迈步、扑通扑通
+    back: { eyes: 'none', mouth: 'none' },
+    walk: { eyes: 'open', mouth: 'normal' },
+    walkBack: { eyes: 'none', mouth: 'none' }
   };
 
   // ---------- 小装饰 / 小图标 ----------

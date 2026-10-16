@@ -74,7 +74,7 @@
     });
     card.appendChild(play);
 
-    card.appendChild(el('div', 'tiny muted', '完成任务赚小鱼干 → 喂猫 → 猫猫升级、解锁装扮。'));
+    card.appendChild(el('div', 'tiny muted', '在大世界里解谜题、抓虫子都能赚小鱼干，然后回来喂它。'));
 
     host.appendChild(card);
     this._panelBuilt = true;
@@ -271,7 +271,7 @@
     statCard.appendChild(p);
 
     var feedCard = el('div', 'card');
-    feedCard.appendChild(el('h3', null, '喂点什么'));
+    feedCard.appendChild(el('h3', null, '给它买点好吃的'));
     var grid = el('div', 'feed-grid');
     for (var i = 0; i < CC.Store.ITEMS.length; i++) {
       (function (item) {
@@ -375,19 +375,23 @@
     clear(host);
 
     var c1 = el('div', 'card');
-    c1.appendChild(el('h3', null, '这个网站是什么'));
-    c1.appendChild(el('p', null, '「粉猫捉虫」是一个面向零基础学习者的 C 语言互动学堂：一边读讲解、一边在网页里写代码、点一下就能运行，还会有一只粉色像素小猫陪着你。写得越多，它越能吃得好、心情越好、解锁更多装扮。'));
-    c1.appendChild(el('p', null, '课程从「什么是程序」讲到数组、字符串、函数和指针，一共 16 课、40 多个练习任务，外加 12 个「捉虫」关卡专门训练找 bug 的能力。'));
+    c1.appendChild(el('h3', null, '🐱 这是一个游戏，不是课本'));
+    c1.appendChild(el('p', null, '你是粉色像素小猫「捉虫」。在一张可以走动的像素大世界里，你带着它到处探索：打开抽屉、给机器人排命令、把绳子拴到箱子上、让蛋糕机出蛋糕、点亮海边的灯塔……每解开一个谜题，世界的某个地方就会真的发生变化（花开了、门开了、桥修好了），捉虫也能吃到小鱼干。'));
+    c1.appendChild(el('p', null, '所有谜题都用一个「生活里能摸到的东西」来解释编程：罐子 = 变量，一排抽屉 = 数组，抽屉里的抽屉 = 文件夹，重复 5 次命令 = 循环，绳子 = 指针，珠子串 + 隐形结尾珠 = 字符串。'));
+    c1.appendChild(el('p', null, '玩明白之后，每个谜题都会给你看「它变成代码是什么样」，还可以点「我想自己写一遍」，用真正的 C 代码再做一次同样的挑战——那时候的你，已经是在写代码了。'));
     host.appendChild(c1);
 
     var c2 = el('div', 'card');
     c2.appendChild(el('h3', null, '怎么玩'));
     var ol = el('ol');
-    ol.appendChild(el('li', null, '打开「学习地图」，从第 1 课开始，按顺序学。'));
-    ol.appendChild(el('li', null, '每课读完讲解，就动手做任务：先「运行」看看结果，再「提交检查」。'));
-    ol.appendChild(el('li', null, '通过任务会得到小鱼干和经验；到「猫窝」里喂猫、买装扮。'));
-    ol.appendChild(el('li', null, '想练手就去「自由练习」，那里有现成的示例代码可以改着玩。'));
-    ol.appendChild(el('li', null, '代码会自动保存在浏览器里，关掉网页下次回来还在。'));
+    ol.appendChild(el('li', null, '在「🗺️ 世界冒险」里用方向键 / WASD 走路，点一下地面也能走过去。'));
+    ol.appendChild(el('li', null, '靠近东西会出现提示，按 空格（手机上按 A 键）和它互动；也可以直接点那个东西。'));
+    ol.appendChild(el('li', null, '小猫的家：储物罐（变量）、小床、饭碗、书架（十六个故事）。'));
+    ol.appendChild(el('li', null, '工坊：五个抽屉（数组）、抽屉迷宫（嵌套）、蛋糕机（函数）、绳子和箱子（指针）。'));
+    ol.appendChild(el('li', null, '家门口：给机器人排命令浇花（循环）、断桥（集齐 3 颗宝石）、森林大门（条件判断）。'));
+    ol.appendChild(el('li', null, '森林：珠子项链（字符串）、虫虫洞（12 只等着你抓的代码虫子）。'));
+    ol.appendChild(el('li', null, '海边：回答三个小问题点亮灯塔，就从小猫学堂毕业啦。'));
+    ol.appendChild(el('li', null, '进度会自动存在浏览器里，关掉网页下次回来还在原地。'));
     c2.appendChild(ol);
     host.appendChild(c2);
 

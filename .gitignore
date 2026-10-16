@@ -11,3 +11,6 @@ Thumbs.db
 tools/*.tmp
 tools/tmp/
 *.log
+
+# 开发预览图（用 npm run art / art:world 随时重新生成）
+tools/preview-*.png
