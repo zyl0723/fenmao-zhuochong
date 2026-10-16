@@ -8,6 +8,8 @@
 
 ![谜题：给机器人排命令](docs/preview-puzzle.png)
 
+![解开谜题后会看到「它变成代码是什么样」](docs/preview-code.png)
+
 ## 🎮 玩法（先把学习忘掉，这是游戏）
 
 | 操作 | 说明 |
