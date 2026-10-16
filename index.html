@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>粉猫捉虫 · C 语言零基础互动学堂</title>
+<meta name="description" content="粉猫捉虫是一个面向零基础学习者的 C 语言互动学习网站：在网页里写代码、立刻运行、中文报错提示，还有一只粉色像素小猫陪你一起学。">
+<meta name="theme-color" content="#f3e7ed">
+<link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="assets/css/style.css">
+<script>
+/* 如果脚本加载失败，至少让访问者看到一句人话，而不是一片空白 */
+window.__bootErrors = [];
+window.addEventListener('error', function (e) {
+  var msg = (e && e.message) ? e.message : 'unknown';
+  window.__bootErrors.push(msg + ' @ ' + ((e && e.filename) || '') + ':' + ((e && e.lineno) || 0));
+  var box = document.getElementById('boot-error');
+  if (box) {
+    box.classList.remove('hidden');
+    box.textContent = '页面脚本出错了：' + window.__bootErrors.join(' | ');
+  }
+});
+</script>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <canvas id="brand-cat" width="42" height="36"></canvas>
+      <span class="brand-text">
+        <span class="brand-title">粉猫捉虫</span>
+        <span class="brand-sub">C 语言零基础互动学堂</span>
+      </span>
+    </div>
+    <nav class="nav" id="nav"></nav>
+    <div class="wallet">
+      <span class="chip">🐟 小鱼干 <b id="fish-count">0</b></span>
+      <span class="chip">🐱 <span id="level-label">Lv.1 小奶猫</span><span class="lv-bar"><i id="level-bar" style="width:0%"></i></span></span>
+      <span class="chip">✅ <span id="done-count">0 / 0</span></span>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+  <div id="boot-error" class="card hidden" style="border-color:#f0c2cc;color:#a4425a"></div>
+
+  <!-- 学习地图 -->
+  <section id="view-map" class="view on">
+    <div class="hero">
+      <canvas id="map-cat" width="128" height="128"></canvas>
+      <div class="hero-body">
+        <h2>写代码，养小猫 🐱</h2>
+        <p class="muted">从「什么是程序」开始，一步一步学会 C 语言。你在网页里写代码、点一下就能运行；
+          每通过一个任务，捉虫就能吃到小鱼干。</p>
+        <div class="speech" id="map-speech">正在认识捉虫…</div>
+        <div class="hero-stats" id="map-stats"></div>
+      </div>
+    </div>
+    <div id="map-chapters"></div>
+  </section>
+
+  <!-- 上课 -->
+  <section id="view-lesson" class="view">
+    <div class="lesson-layout">
+      <aside class="lesson-side">
+        <div class="side-card">
+          <div class="side-title">课程目录（16 课）</div>
+          <div class="lesson-nav" id="lesson-nav"></div>
+        </div>
+        <div class="side-card">
+          <div class="side-title">小提示</div>
+          <div class="tiny muted">
+            编辑器里按 <b>Tab</b> 缩进 4 格，按 <b>Ctrl + Enter</b> 直接运行；
+            代码会自动保存在你的浏览器里。
+          </div>
+        </div>
+      </aside>
+      <div id="lesson-content"></div>
+      <aside class="pet-side" id="pet-side"></aside>
+    </div>
+  </section>
+
+  <!-- 捉虫挑战 -->
+  <section id="view-bugs" class="view">
+    <div class="view-head">
+      <h2>🐛 捉虫挑战</h2>
+      <p>这些小虫子藏在代码里：有的让程序报错，有的让结果算错。你的任务是找到它们、修好它们。
+        <span class="tag" id="bugs-progress">已捉到 0 / 0 只虫子</span></p>
+    </div>
+    <div class="bug-grid" id="bugs-grid"></div>
+    <div id="bug-detail" class="hidden" style="margin-top:18px"></div>
+  </section>
+
+  <!-- 自由练习 -->
+  <section id="view-playground" class="view">
+    <div class="view-head">
+      <h2>🧪 自由练习场</h2>
+      <p>想写什么就写什么。右边有现成的示例代码，点一下就能载入编辑器，改着玩最有效。</p>
+    </div>
+    <div class="play-layout">
+      <div class="card" style="padding:14px">
+        <div id="pg-editor"></div>
+        <div class="stdin-row">
+          <label>程序输入</label>
+          <input id="pg-stdin" placeholder="程序需要读数据时填这里，例如 5 8">
+        </div>
+        <div class="row" id="pg-buttons" style="margin-top:10px"></div>
+        <div class="console">
+          <div class="console-out" id="pg-output"><span class="ph">点「运行」看看结果～</span></div>
+          <div class="feedback info hidden" id="pg-warnings"></div>
+        </div>
+      </div>
+      <aside>
+        <div class="side-card">
+          <div class="side-title">示例代码</div>
+          <div class="example-list" id="pg-examples"></div>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- 猫窝 -->
+  <section id="view-room" class="view">
+    <div class="view-head">
+      <h2>🏠 捉虫的猫窝</h2>
+      <p>用学习赚来的小鱼干喂它、给它买装扮。点一下猫猫，它会有反应哦。</p>
+    </div>
+    <div class="room-layout">
+      <div class="room-stage">
+        <canvas id="room-cat" width="224" height="224" style="cursor:pointer"></canvas>
+        <div class="pet-name">捉虫</div>
+        <div class="tiny muted">点一下它，它会开心一下～</div>
+      </div>
+      <div id="room-body"></div>
+    </div>
+  </section>
+
+  <!-- 关于 -->
+  <section id="view-about" class="view">
+    <div class="view-head">
+      <h2>关于本站 / 署名</h2>
+      <p>这个站点是怎么做的、用了什么、向谁致谢，以及它的能力边界。</p>
+    </div>
+    <div id="about-body"></div>
+  </section>
+
+</main>
+
+<div id="toast-layer"></div>
+
+<noscript>
+  <div class="wrap"><div class="card">这个学习网站需要启用 JavaScript 才能运行代码，请在浏览器设置里打开 JavaScript。</div></div>
+</noscript>
+
+<!-- 运行顺序：解释器 → 宠物画稿 → 存档 → 判题 → 课程内容 → 界面 -->
+<script src="assets/js/interpreter.js"></script>
+<script src="assets/js/pet-art.js"></script>
+<script src="assets/js/store.js"></script>
+<script src="assets/js/pet.js"></script>
+<script src="assets/js/grader.js"></script>
+<script src="assets/js/content-lessons-1.js"></script>
+<script src="assets/js/content-lessons-2.js"></script>
+<script src="assets/js/content-lessons-3.js"></script>
+<script src="assets/js/content-lessons-4.js"></script>
+<script src="assets/js/content-bugs.js"></script>
+<script src="assets/js/editor.js"></script>
+<script src="assets/js/app.js"></script>
+<script src="assets/js/views-core.js"></script>
+<script src="assets/js/views-tasks.js"></script>
+<script src="assets/js/views-more.js"></script>
+<script src="assets/js/main.js"></script>
+</body>
+</html>

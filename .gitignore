@@ -1,0 +1,13 @@
+# 依赖（本项目其实不需要任何依赖）
+node_modules/
+
+# 编辑器 / 系统
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 开发过程中的临时产物
+tools/*.tmp
+tools/tmp/
+*.log
