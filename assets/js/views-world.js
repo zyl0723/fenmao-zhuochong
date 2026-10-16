@@ -449,7 +449,20 @@
       u.panelFoot.appendChild(close);
 
       this.refresh();
-      UI.rewardToasts(out, 'puzzle');
+      var subs = [];
+      if (out.first) subs.push('🐟 +' + out.fish + '　⭐ +' + out.xp + '　❤️ +2');
+      else subs.push('这个谜题以前解开过啦');
+      if (out.gem) subs.push('💎 宝石 +1（' + out.gem + ' / 3）');
+      if (out.achievements && out.achievements.length) subs.push('🏅 新成就 × ' + out.achievements.length);
+      if (out.achievements && out.achievements.length) UI.rewardAch(out.achievements);
+      if (CC.FX && CC.FX.celebrate) {
+        CC.FX.celebrate({
+          title: (def.id === 'lighthouse' ? '✨ 灯塔亮了！' : '🎉 谜题解开啦！'),
+          subtitle: def.title + '　' + subs.join('　'),
+          exitLabel: '继续冒险',
+          levelUp: out.levels > 0
+        });
+      }
     },
 
     closePanel: function () {

@@ -652,3 +652,95 @@ table.data code { background: var(--pink-mist); padding: 0 4px; border-radius: 4
   .world-say { flex-direction: column; }
   .pz-jars-row { flex-wrap: wrap; }
 }
+/* ==========================================================================
+   情绪价值：撒花 / 夸夸弹窗雨 / 拥抱安慰
+   ========================================================================== */
+
+.fx-layer { position: fixed; inset: 0; z-index: 300; pointer-events: none; overflow: hidden; }
+
+.fx-banner {
+  position: absolute; left: 50%; top: 38%; transform: translate(-50%, -50%);
+  background: linear-gradient(135deg, #fff, var(--pink-mist));
+  border: 4px solid var(--pink); border-radius: 22px;
+  padding: 16px 30px; font-size: 30px; font-weight: 800; color: var(--pink-dark);
+  box-shadow: 0 16px 40px rgba(91, 68, 83, .28);
+  text-align: center; animation: fx-banner-in .5s cubic-bezier(.2, 1.6, .4, 1);
+  white-space: nowrap;
+}
+.fx-banner-sub { display: block; font-size: 15px; font-weight: 600; color: var(--ink-soft); margin-top: 4px; font-family: var(--mono); }
+@keyframes fx-banner-in { from { transform: translate(-50%, -50%) scale(.4); opacity: 0; } to { transform: translate(-50%, -50%) scale(1); opacity: 1; } }
+
+.fx-bubble {
+  position: absolute; max-width: min(250px, 46vw);
+  padding: 9px 13px; border-radius: 15px;
+  border: 3px solid var(--pink-soft);
+  font-size: 14px; line-height: 1.5; color: var(--ink);
+  box-shadow: 0 8px 18px rgba(91, 68, 83, .16);
+  transform: rotate(var(--rot, 0deg));
+  animation: fx-pop .3s cubic-bezier(.2, 1.7, .4, 1) backwards;
+}
+@keyframes fx-pop {
+  from { transform: scale(.3) rotate(var(--rot, 0deg)); opacity: 0; }
+  to { transform: scale(1) rotate(var(--rot, 0deg)); opacity: 1; }
+}
+
+.fx-sticker {
+  font-size: 30px; padding: 6px 12px; border-radius: 999px;
+  border-width: 3px; line-height: 1.1;
+}
+
+.fx-confetti {
+  position: absolute; top: -24px; border-radius: 2px; display: block;
+  animation-name: fx-fall; animation-timing-function: linear; animation-fill-mode: forwards;
+}
+@keyframes fx-fall {
+  0% { transform: translate(0, 0) rotate(0deg); opacity: 1; }
+  100% { transform: translate(var(--drift, 20px), 108vh) rotate(var(--spin, 360deg)); opacity: .85; }
+}
+
+.fx-exit {
+  position: fixed; left: 50%; bottom: 28px; transform: translateX(-50%);
+  pointer-events: auto; cursor: pointer;
+  font-size: 17px; font-weight: 800; padding: 14px 30px; border-radius: 999px;
+  border: 3px solid var(--pink-deep); background: var(--pink); color: #fff;
+  box-shadow: 0 6px 0 var(--pink-deep), 0 14px 30px rgba(91, 68, 83, .3);
+  animation: fx-exit-in .4s cubic-bezier(.2, 1.7, .4, 1);
+}
+.fx-exit:active { transform: translateX(-50%) translateY(3px); box-shadow: 0 3px 0 var(--pink-deep); }
+@keyframes fx-exit-in { from { transform: translateX(-50%) translateY(40px); opacity: 0; } to { transform: translateX(-50%); opacity: 1; } }
+
+.fx-comfort-back {
+  position: fixed; inset: 0; z-index: 320;
+  background: rgba(58, 42, 52, .55); backdrop-filter: blur(3px);
+  display: flex; align-items: center; justify-content: center; padding: 16px;
+}
+.fx-comfort-card {
+  width: min(580px, 94vw); max-height: 88vh; overflow: auto;
+  background: var(--panel); border: 4px solid var(--pink-soft); border-radius: 22px;
+  padding: 18px 20px 20px; text-align: center;
+  box-shadow: 0 24px 60px rgba(74, 58, 68, .4);
+  animation: fx-banner-in .45s cubic-bezier(.2, 1.6, .4, 1);
+}
+.fx-comfort-face { display: block; margin: 0 auto 4px; }
+.fx-comfort-title { font-size: 19px; color: var(--pink-dark); margin: 0 0 6px; }
+.fx-comfort-sub { font-size: 13.5px; color: var(--ink-soft); margin: 0 0 12px; }
+.fx-comfort-lines { text-align: left; }
+.fx-comfort-line {
+  background: #fff; border: 2px solid var(--line); border-radius: 13px;
+  padding: 9px 13px; margin-bottom: 8px; font-size: 14.5px;
+  animation: fx-slide .32s ease-out backwards;
+}
+.fx-comfort-line:nth-child(odd) { background: var(--pink-mist); border-color: var(--pink-soft); }
+@keyframes fx-slide { from { transform: translateY(10px); opacity: 0; } to { transform: none; opacity: 1; } }
+.fx-comfort-actions { display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+
+.mute-btn {
+  border: 2px solid var(--line); background: var(--panel); border-radius: 999px;
+  padding: 4px 10px; font-size: 14px; cursor: pointer; line-height: 1.4;
+}
+.mute-btn:hover { background: var(--panel-2); }
+
+@media (max-width: 640px) {
+  .fx-banner { font-size: 22px; padding: 12px 20px; }
+  .fx-bubble { font-size: 13px; padding: 7px 10px; }
+}

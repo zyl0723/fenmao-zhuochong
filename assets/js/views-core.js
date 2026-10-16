@@ -39,6 +39,7 @@
       var self = this;
       CC.App.onChange(function () { self.refresh(); });
       this.buildNav();
+      this.buildMute();
       this.buildViews();
       this.showView('world');
       this.refresh();
@@ -72,6 +73,30 @@
           nav.appendChild(b);
         })(items[i][0], items[i][1]);
       }
+    },
+
+    buildMute: function () {
+      var host = document.querySelector('.wallet');
+      if (!host || document.getElementById('mute-btn')) return;
+      var b = document.createElement('button');
+      b.id = 'mute-btn';
+      b.className = 'mute-btn';
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        CC.App.state.muted = !CC.App.state.muted;
+        CC.App.save();
+        CC.UI.syncMute();
+        if (!CC.App.state.muted && CC.FX) CC.FX.sound('pop');
+      });
+      host.appendChild(b);
+      this.syncMute();
+    },
+    syncMute: function () {
+      var b = document.getElementById('mute-btn');
+      if (!b) return;
+      var m = !!(CC.App.state && CC.App.state.muted);
+      b.textContent = m ? '🔇' : '🔊';
+      b.title = m ? '音效已关闭（点一下打开）' : '音效已打开（点一下关闭）';
     },
 
     showView: function (name) {

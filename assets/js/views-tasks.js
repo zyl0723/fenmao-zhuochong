@@ -28,6 +28,12 @@
     }, 4200);
   };
 
+  UI.rewardAch = function (list) {
+    for (var i = 0; i < list.length; i++) {
+      this.toast('🏅 解锁成就：' + list[i].title, list[i].desc + '（小鱼干 +' + (list[i].fish || 5) + '）');
+    }
+  };
+
   UI.rewardToasts = function (out, kind) {
     if (!out) return;
     if (out.first) {
@@ -209,7 +215,24 @@
         fbBox.appendChild(extra);
         if (task.learn) fbBox.appendChild(el('div', 'tiny', '知识点：' + task.learn));
         setTag(true);
-        self.rewardToasts(out, isBug ? 'bug' : 'lesson');
+        if (CC.FX) CC.FX.passTask(task.id);
+        // 撒花 + 夸夸弹窗铺满屏幕（点到「收下夸夸」才收起）
+        if (CC.FX && CC.FX.celebrate) {
+          var subs = [];
+          if (out.first) subs.push('🐟 +' + out.fish + '　⭐ +' + out.xp + '　❤️ +1');
+          else subs.push('又练了一遍，熟练度 +1');
+          if (out.gem) subs.push('💎 宝石 +1');
+          if (out.achievements && out.achievements.length) subs.push('🏅 新成就 × ' + out.achievements.length);
+          CC.FX.celebrate({
+            title: isBug ? '🐛 虫子抓住啦！' : '🎉 过啦！',
+            subtitle: subs.join('　'),
+            exitLabel: '收下夸夸，继续冒险',
+            levelUp: out.levels > 0
+          });
+          if (out.achievements && out.achievements.length) self.rewardAch(out.achievements);
+        } else {
+          self.rewardToasts(out, isBug ? 'bug' : 'lesson');
+        }
         self.refresh();
       } else {
         fbBox.className = 'feedback bad';
@@ -225,6 +248,12 @@
         }
         if (task.hints && task.hints.length) {
           fbBox.appendChild(el('div', 'tiny', '卡住了？让它给你点「💡 猫猫提示」吧。'));
+        }
+        // 连续答错 5 次，小猫来安慰（每次 5 句不重复的话）
+        if (CC.FX && CC.FX.failTask) {
+          CC.FX.failTask(task.id, {
+            onHint: function () { if (task.hints && task.hints.length) hintBtn.click(); }
+          });
         }
       }
     }

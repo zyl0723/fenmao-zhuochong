@@ -119,6 +119,7 @@
       achievements: {},
       streak: { days: 1, lastDay: today() },
       flags: {},
+      muted: false,             // 音效开关
       stats: { runs: 0, successRuns: 0, failRuns: 0, feedCount: 0, totalTyped: 0 },
       meta: { totalTasks: 0, totalBugs: 0 },
       log: []

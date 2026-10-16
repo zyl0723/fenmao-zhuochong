@@ -12,6 +12,7 @@ const FILES = [
   'assets/js/content-lessons-3.js',
   'assets/js/content-lessons-4.js',
   'assets/js/content-bugs.js',
+  'assets/js/fx.js',
   'assets/js/world-art.js',
   'assets/js/world-data.js',
   'assets/js/puzzles.js',
@@ -111,6 +112,47 @@ describe('捉虫关卡检查', () => {
       });
     });
   }
+});
+
+describe('情绪价值：夸夸与安慰', () => {
+  const FX = CC.FX;
+
+  test('夸夸池足够大，而且句子都不重复', () => {
+    ok(FX && FX.PRAISE, '没有找到夸夸池');
+    ok(FX.PRAISE.length >= 40, '夸夸句子太少：' + FX.PRAISE.length);
+    const set = new Set(FX.PRAISE);
+    eq(set.size, FX.PRAISE.length, '夸夸池里有重复的句子');
+    FX.PRAISE.forEach(p => ok(typeof p === 'string' && p.length >= 4, '有一句夸夸太短了：' + p));
+  });
+
+  test('安慰池足够大，句子都不重复', () => {
+    ok(FX && FX.COMFORT, '没有找到安慰池');
+    ok(FX.COMFORT.length >= 20, '安慰句子太少：' + FX.COMFORT.length);
+    const set = new Set(FX.COMFORT);
+    eq(set.size, FX.COMFORT.length, '安慰池里有重复的句子');
+  });
+
+  test('每次安慰抽 5 句，互相都不重复', () => {
+    const used = [];
+    for (let round = 0; round < 12; round++) {
+      const picked = FX._pickUnique(FX.COMFORT, used, 5);
+      eq(picked.length, 5, '没有抽满 5 句');
+      eq(new Set(picked).size, 5, '同一轮里出现了重复的安慰：' + picked.join(' / '));
+      picked.forEach(p => ok(FX.COMFORT.indexOf(p) >= 0, '抽出了不在池子里的句子'));
+    }
+  });
+
+  test('安慰不会连着重复（池子用完后才重新开始）', () => {
+    const used = [];
+    const seen = [];
+    for (let round = 0; round < 4; round++) {
+      const picked = FX._pickUnique(FX.COMFORT, used, 5);
+      picked.forEach(p => {
+        ok(seen.indexOf(p) < 0, '上一次安慰过的句子又出现了：' + p);
+        seen.push(p);
+      });
+    }
+  });
 });
 
 describe('大世界地图与谜题', () => {

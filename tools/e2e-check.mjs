@@ -62,12 +62,38 @@ check('正确答案能通过判题', afterPass.fb.includes('过啦'), afterPass.
 check('通过后记录了完成状态', afterPass.done === true);
 check('通过后拿到了小鱼干和经验', afterPass.fish > b.fish && afterPass.xp > 0, 'fish=' + afterPass.fish + ' xp=' + afterPass.xp);
 
+// 2.5 通关应该撒花 + 一堆夸夸弹窗，还能一键收起
+await sleep(600);
+const fx = JSON.parse(await evalJs('JSON.stringify({ bubbles: document.querySelectorAll(".fx-bubble").length, confetti: document.querySelectorAll(".fx-confetti").length, exit: !!document.querySelector(".fx-exit"), banner: (document.querySelector(".fx-banner")||{}).textContent || "" })'));
+check('通关后出现夸夸弹窗雨', fx.bubbles >= 8, fx.bubbles + ' 个夸夸弹窗');
+check('通关后有撒花特效', fx.confetti > 10, fx.confetti + ' 片花瓣');
+check('夸夸屏幕上有退出按钮', fx.exit === true, fx.banner.slice(0, 20));
+await evalJs('document.querySelector(".fx-exit").click()');
+await sleep(900);
+const fxAfter = JSON.parse(await evalJs('JSON.stringify({ bubbles: document.querySelectorAll(".fx-bubble").length, layer: !!document.getElementById("fx-layer") })'));
+check('点退出按钮后夸夸弹窗收起来了', fxAfter.bubbles === 0 && fxAfter.layer === false);
+
 // 3. 错误答案会被指出问题
 await evalJs('CC.UI.editors["L1-T2"].setValue("#include <stdio.h>\\n\\nint main() {\\n    printf(\\"错的答案\\n\\");\\n    return 0;\\n}\\n")');
 await evalJs('[...document.querySelectorAll("#task-L1-T2 button")].find(b => b.textContent.includes("交给捉虫看看")).click()');
 await sleep(900);
 const afterFail = JSON.parse(await evalJs('JSON.stringify({ fb: [...document.querySelectorAll("#task-L1-T2 .feedback")].filter(function(e){return !e.classList.contains("hidden");}).map(function(e){return e.textContent;}).join(" "), done: !!CC.App.state.completedTasks["L1-T2"] })'));
 check('错误答案不会通过', afterFail.fb.includes('歪着头') && afterFail.done === false);
+
+// 3.5 连错 5 次，小猫应该来安慰（而且每次 5 句都不重复）
+await evalJs('CC.UI.editors["L1-T2"].setValue("#include <stdio.h>\\n\\nint main() {\\n    printf(\\"还是错的\\n\\");\\n    return 0;\\n}\\n")');
+for (let i = 0; i < 5; i++) {
+  await evalJs('[...document.querySelectorAll("#task-L1-T2 button")].find(b => b.textContent.includes("交给捉虫看看")).click()');
+  await sleep(500);
+}
+await sleep(2200);
+const comfort = JSON.parse(await evalJs('JSON.stringify({ open: !!document.querySelector(".fx-comfort-card"), lines: [...document.querySelectorAll(".fx-comfort-line")].map(e => e.textContent), unique: new Set([...document.querySelectorAll(".fx-comfort-line")].map(e => e.textContent)).size, face: !!document.querySelector(".fx-comfort-face") })'));
+check('连错 5 次后弹出小猫安慰', comfort.open === true, comfort.lines.length + ' 句安慰');
+check('安慰至少 5 句且互不重复', comfort.lines.length >= 5 && comfort.unique === comfort.lines.length, JSON.stringify(comfort.lines.slice(0, 1)));
+check('安慰弹窗里有小猫的脸', comfort.face === true);
+await evalJs('[...document.querySelectorAll(".fx-comfort-actions button")].find(b => b.textContent.includes("我再试一次")).click()');
+await sleep(400);
+check('安慰弹窗可以关掉继续做题', await evalJs('!document.querySelector(".fx-comfort-card")'));
 
 // 4. 捉虫关卡：修好 B1
 await evalJs('CC.UI.showView("bugs"); CC.UI.openBug("B1")');
