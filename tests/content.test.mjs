@@ -253,4 +253,78 @@ LESSONS.forEach(l => l.tasks.forEach(t => {
 }));
 
 process.stdout.write('\n起始代码就能通过的任务（不算错误，但可以留意）：' + (friendlyStarters.length ? friendlyStarters.join(', ') : '无') + '\n');
+describe('判题严格度：空行不能蒙混过关', () => {
+  const G = CC.Grade;
+  const task = { tests: [{ expect: '第一行\n第二行\n第三行' }] };
+  const run = (code) => G.gradeTask(task, code);
+
+  test('完全正确（最后一行带 \\n）能通过', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行\\n第二行\\n第三行\\n");return 0;}');
+    ok(r.pass, '正确输出应该通过：' + r.message);
+  });
+
+  test('最后一行不带 \\n 也能通过（每一行的内容一样）', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行\\n第二行\\n第三行");return 0;}');
+    ok(r.pass, '不写最后那个换行符应该也算对：' + r.message);
+  });
+
+  test('两行之间多一个空行 → 判错', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行\\n\\n第二行\\n第三行\\n");return 0;}');
+    ok(!r.pass, '中间多空行不应该通过');
+    contains(r.message, '空行');
+  });
+
+  test('开头多空行 → 判错', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("\\n\\n第一行\\n第二行\\n第三行\\n");return 0;}');
+    ok(!r.pass, '开头多空行不应该通过');
+    contains(r.message, '空行');
+  });
+
+  test('结尾多空行 → 判错', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行\\n第二行\\n第三行\\n\\n\\n");return 0;}');
+    ok(!r.pass, '结尾多空行不应该通过');
+    contains(r.message, '空行');
+  });
+
+  test('每行都多空行 → 判错，并给出逐行对比', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行\\n\\n第二行\\n\\n第三行\\n\\n");return 0;}');
+    ok(!r.pass, '每行后多空行不应该通过');
+    contains(r.message, '空行');
+    contains(r.message, '题目要的输出（3 行）');
+    contains(r.message, '你的输出（6 行）');
+    contains(r.message, '（空行）');
+  });
+
+  test('行尾空格不算错（看不见，不影响结果）', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行   \\n第二行\\t\\n第三行\\n");return 0;}');
+    ok(r.pass, '行尾空格应该被忽略：' + r.message);
+  });
+
+  test('少打印一行 → 判错并说清行数', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行\\n第二行\\n");return 0;}');
+    ok(!r.pass);
+    contains(r.message, '行数少了');
+  });
+
+  test('多打印一行 → 判错并说清行数', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行\\n第二行\\n第三行\\n第四行\\n");return 0;}');
+    ok(!r.pass);
+    contains(r.message, '行数多了');
+  });
+
+  test('打错一个字 → 指出第几行不一样', () => {
+    const r = run('#include <stdio.h>\nint main(){printf("第一行\\n第二行\\n第三行啊\\n");return 0;}');
+    ok(!r.pass);
+    contains(r.message, '第 3 行');
+  });
+
+  test('所有题目的参考答案依然能通过严格判题', () => {
+    LESSONS.forEach(l => l.tasks.forEach(t => {
+      if (!t.solution) return;
+      const r = G.gradeTask(t, t.solution);
+      ok(r.pass, t.id + ' 的参考答案在新的严格判题下不通过了：' + r.message.split('\n')[0]);
+    }));
+  });
+});
+
 summary();

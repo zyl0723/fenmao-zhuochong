@@ -406,6 +406,7 @@
     for (var i = 0; i < supports.length; i++) ul.appendChild(el('li', null, supports[i]));
     c3.appendChild(ul);
     c3.appendChild(el('p', null, '它不支持：结构体（struct）、联合体、枚举、goto、文件读写、动态内存 malloc，以及多文件项目。想写这些内容时，请换用真正的编译器，例如 gcc、Dev-C++ 或 VS Code + MinGW。学习完本站的课程后，你会很自然地过渡过去。'));
+    c3.appendChild(el('p', null, '判题是按「行」严格比较的：多打一个空行也会判错，并且会把「题目要的输出」和「你的输出」逐行列出来，标出哪一行多了空行、哪一行开始不一样。只有每行行尾多余的空格会被忽略（因为它看不见）。这样你在本站养成的输出习惯，到了真正的判题网站上也一样能过。'));
     host.appendChild(c3);
 
     var c4 = el('div', 'card');
