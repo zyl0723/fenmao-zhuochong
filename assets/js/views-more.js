@@ -404,7 +404,7 @@
 
     var c2c = el('div', 'card');
     c2c.appendChild(el('h3', null, '📚 C 函数手册：遇到不会用的函数就来查'));
-    c2c.appendChild(el('p', null, '手册收录了 16 个头文件、108 个函数与常量：stdio.h、stdlib.h、string.h、math.h、ctype.h、time.h、limits.h、stdbool.h、stdint.h、stddef.h、assert.h、float.h、errno.h、conio.h……每个函数都写清楚原型、作用、参数、返回值、常见坑和一段可以运行的示例。'));
+    c2c.appendChild(el('p', null, '手册收录了 15 个头文件、108 个函数与常量：stdio.h、stdlib.h、string.h、math.h、ctype.h、time.h、limits.h、stdbool.h、stdint.h、stddef.h、assert.h、float.h、errno.h、conio.h……每个函数都写清楚原型、作用、参数、返回值、常见坑和一段可以运行的示例。'));
     c2c.appendChild(el('p', null, '标着「✅ 本站可直接运行」的示例，点一下就能打开到练习场真的跑起来；标着「⚠️ 需要真编译器」的（文件、内存、结构体等）会告诉你为什么需要真正的 gcc。手册里还有 printf / scanf 的格式符速查表、角度弧度换算表和整数范围表。'));
     host.appendChild(c2c);
 
