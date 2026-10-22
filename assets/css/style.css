@@ -974,3 +974,61 @@ table.data code { background: var(--pink-mist); padding: 0 4px; border-radius: 4
   .drills-layout { grid-template-columns: minmax(0, 1fr); }
   .drills-side { position: static; max-height: none; }
 }
+/* ===== 函数闯关：PTA 风格在线编程 ===== */
+.drills-mode-tabs { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-top: 12px; padding-bottom: 10px; border-bottom: 2px dashed var(--line-2); }
+.drills-mode-tab { border: 2px solid var(--line-2); background: var(--panel); color: var(--ink-soft); border-radius: 999px; padding: 6px 15px; font: inherit; font-size: 13px; font-weight: 700; cursor: pointer; }
+.drills-mode-tab:hover { border-color: var(--pink); color: var(--pink-dark); }
+.drills-mode-tab.on { color: #fff; background: var(--pink-deep); border-color: var(--pink-deep); box-shadow: 0 3px 0 rgba(163, 99, 121, .18); }
+.drills-mode-note { margin-left: auto; font-size: 11.5px; color: var(--ink-soft); }
+.drills-stat-divider { height: 1px; margin: 10px 0 8px; background: var(--line-2); }
+.code-drill-shell { display: grid; grid-template-columns: minmax(0, .88fr) minmax(390px, 1.12fr); gap: 16px; align-items: start; }
+.code-drill-brief, .code-drill-workbench { min-width: 0; }
+.code-drill-brief { background: linear-gradient(180deg, #fffafb, var(--panel)); border: 2px solid var(--line); border-radius: 16px; padding: 16px; }
+.code-drill-workbench { background: #fffdfd; border: 2px solid var(--line); border-radius: 16px; padding: 14px; }
+.code-drill-title-row { display: flex; align-items: center; gap: 8px; }
+.code-drill-title { margin: 0; font-size: 21px; line-height: 1.35; }
+.code-drill-story { color: var(--ink-soft); line-height: 1.75; margin: 10px 0 12px; }
+.code-drill-goal { display: flex; gap: 9px; align-items: flex-start; padding: 10px 12px; border-radius: 12px; background: var(--pink-mist); border: 1px dashed var(--pink-soft); line-height: 1.65; font-size: 13.5px; }
+.code-drill-goal strong { flex: 0 0 auto; color: var(--pink-dark); }
+.code-drill-spec { margin-top: 11px; border: 2px solid var(--line-2); border-radius: 12px; overflow: hidden; }
+.code-drill-spec-row { display: grid; grid-template-columns: 48px minmax(0, 1fr); gap: 8px; padding: 8px 11px; font-size: 12.5px; line-height: 1.65; }
+.code-drill-spec-row + .code-drill-spec-row { border-top: 1px solid var(--line-2); }
+.code-drill-spec-row b { color: var(--pink-dark); }
+.code-drill-functions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; margin: 12px 0; }
+.code-fn-chip { font-family: var(--mono); font-size: 11.5px; color: var(--ink); background: var(--panel-3); border: 1px solid var(--line-2); border-radius: 7px; padding: 2px 7px; }
+.code-drill-sample { margin-top: 10px; }
+.code-drill-sample-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+.code-drill-sample .codeblock { margin-top: 7px; }
+.code-drill-hidden-panel { margin-top: 12px; padding: 11px 13px; background: #fffdf8; border: 2px dashed #e8d9bd; border-radius: 12px; }
+.code-drill-work-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-bottom: 8px; }
+.code-drill-editor .editor-wrap { border-radius: 12px; overflow: hidden; }
+.code-drill-editor .editor-input, .code-drill-editor .editor-layer { min-height: 330px !important; }
+.code-drill-stdin-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 12px; }
+.code-drill-stdin-head label { font-size: 12.5px; font-weight: 700; color: var(--ink-soft); }
+.code-drill-stdin { width: 100%; box-sizing: border-box; margin-top: 6px; padding: 9px 11px; resize: vertical; border: 2px solid var(--line-2); border-radius: 10px; background: var(--panel-2); color: var(--ink); font: 12.5px/1.55 var(--mono); }
+.code-drill-stdin:focus { outline: none; border-color: var(--pink); background: #fff; }
+.code-drill-actions { display: flex; gap: 7px; flex-wrap: wrap; align-items: center; margin-top: 10px; }
+.code-drill-actions .primary { order: -1; }
+.code-drill-nav { display: flex; justify-content: space-between; gap: 8px; margin-top: 9px; }
+.code-drill-result { margin-top: 12px; padding: 12px; border: 2px solid var(--line-2); border-radius: 12px; background: var(--panel-2); }
+.code-drill-result.ok { border-color: #b7dccd; background: var(--mint-soft); }
+.code-drill-result.bad { border-color: #f0c2cc; background: var(--danger-soft); }
+.code-drill-result-title { font-weight: 800; font-size: 14px; margin-bottom: 6px; }
+.code-drill-console, .code-drill-diff { margin: 0; padding: 10px 11px; border-radius: 9px; background: #2e2930; color: #fff5fa; font: 12px/1.65 var(--mono); white-space: pre-wrap; overflow-wrap: anywhere; max-height: 230px; overflow: auto; }
+.code-drill-warning { margin-top: 8px; font-size: 12px; color: var(--ink-soft); line-height: 1.6; }
+.code-drill-judge-msg { margin: 3px 0 9px; font-size: 12.5px; line-height: 1.6; color: var(--ink-soft); white-space: pre-wrap; }
+.code-drill-tests { display: flex; flex-direction: column; gap: 7px; }
+.code-drill-test { border-radius: 9px; background: rgba(255,255,255,.7); border: 1px solid var(--line-2); padding: 7px 9px; }
+.code-drill-test.pass { border-color: #b7dccd; }
+.code-drill-test.fail { border-color: #f0c2cc; }
+.code-drill-test-head { display: flex; align-items: center; gap: 7px; font-size: 12px; }
+.code-drill-test-head b { font-weight: 700; }
+.code-drill-test-icon { width: 19px; height: 19px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; color: #fff; font-size: 11px; background: var(--mint); flex: 0 0 auto; }
+.code-drill-test.fail .code-drill-test-icon { background: var(--danger); }
+.code-drill-test-state { margin-left: auto; font-size: 11px; color: var(--ink-soft); }
+.code-drill-diff-label { margin: 7px 0 3px; font-size: 10.5px; font-weight: 700; color: var(--ink-soft); }
+.code-drill-diff { max-height: 160px; }
+@media (max-width: 1100px) {
+  .code-drill-shell { grid-template-columns: minmax(0, 1fr); }
+  .drills-mode-note { width: 100%; margin-left: 0; }
+}

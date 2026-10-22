@@ -17,7 +17,7 @@
 | 大世界玩法（四张地图、走路探索、世界状态会变） | 本仓库原创 |
 | 思维训练（8 道题 + 每题配画布、思路检查、参考流程图与对应代码练习） | 本仓库原创 |
 | C 函数手册（15 个头文件、108 个函数条目与可运行示例） | 本仓库原创 |
-| 函数闯关题库（89 道题与解析） | 本仓库原创；41 道输出题用真实 gcc 编译运行核对 |
+| 函数闯关题库（89 道选择题 + 24 道在线编程题） | 本仓库原创；选择题输出题、编程题参考答案和全部测试点均用真实 gcc 编译运行核对 |
 | API 模块（OpenAI 兼容客户端 / 预设 / AI 助教入口） | 本仓库原创 |
 | 十个互动谜题与它们用的比喻（罐子=变量、抽屉=数组、抽屉里的抽屉=文件夹、机器人=循环、绳子=指针、珠子+隐形珠子=字符串…） | 本仓库原创 |
 
@@ -27,6 +27,7 @@
 | --- | --- | --- |
 | [JSCPP](https://github.com/felixhao28/JSCPP) | 参考了「用 JavaScript 在浏览器里解释 C 语言」这一思路的可行性；本项目**没有**使用它的代码 | MIT |
 | [CodeCombat](https://codecombat.com/) / [Screeps](https://screeps.com/) 等编程闯关游戏 | 参考了「用游戏化与角色陪伴来降低编程学习门槛」的产品思路；「在真实世界场景里用比喻讲编程概念」的呈现方式也受这类作品启发 | 各自许可 |
+| [PTA 拼题A](https://pintia.cn/) 一类在线判题平台 | 参考了「题面 / 样例 / 提交 / 多测试点」的交互习惯；本项目的工作台、界面、题目与解析均为原创，未复制其题目或素材 | 平台内容版权归原平台与作者 |
 | 《hello world 里的计算机原理》一类的科普读物 | 「抽屉 / 罐子 / 传送带」这类实物比喻的灵感来源（未复制任何文字） | 书籍版权归作者 |
 | [菜鸟教程 C 语言教程](https://www.runoob.com/cprogramming/c-tutorial.html)、[cppreference](https://zh.cppreference.com/) | 语法细节与常见错误的核对参考（例如整数除法、`scanf` 的 `&`、数组下标越界）；函数题海的语义也以 cppreference / ISO C 为准，**未复制文字** | 各自许可 |
 | [ISO/IEC 9899（C 语言标准）](https://www.iso.org/standard/74528.html) | 函数语义、返回值和未定义行为的最终依据 | 标准文本版权归 ISO/IEC |
@@ -34,7 +35,7 @@
 | 《C 程序设计语言》(K&R) | 课程顺序与知识点取舍的参考方向 | 书籍版权归作者与出版社 |
 | [GitHub Primer / Shields.io](https://shields.io/) | README 徽章的常见写法参考 | CC0 / MIT |
 
-> 关于「GitHub 上有没有现成题库可用」：我们检索并查看了 `mre/the-coding-interview`（MIT）、`ohkimur/the-c-programming-language-2nd-edition-solutions`（MIT）、`chiphuyen/coding-exercises` 等仓库。它们主要是算法/面试题或 K&R 书的习题解答，不是「C 标准库函数专项题」，且 K&R 习题本身的文字版权属于原书作者，因此**没有复制或改编它们的题目文字**。函数题海的 89 道题为本仓库原创，并按上表来源核对标准行为。
+> 关于「GitHub 上有没有现成题库可用」：我们检索并查看了 `mre/the-coding-interview`（MIT）、`ohkimur/the-c-programming-language-2nd-edition-solutions`（MIT）、`chiphuyen/coding-exercises` 等仓库。它们主要是算法/面试题或 K&R 书的习题解答，不是「C 标准库函数专项题」，且 K&R 习题本身的文字版权属于原书作者，因此**没有复制或改编它们的题目文字**。函数题海的 89 道选择题和 24 道在线编程题均为本仓库原创，并按上表来源核对标准行为。
 >
 > 如果你是上表中某个项目的作者，并且认为这里的表述需要调整，欢迎提 issue，我们会立刻修改。
 
