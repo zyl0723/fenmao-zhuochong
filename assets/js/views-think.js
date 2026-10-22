@@ -249,6 +249,10 @@
     refBtn.type = 'button';
     refBtn.addEventListener('click', function () { self.showReference(); });
     actions.appendChild(refBtn);
+    var aiRef = UI.el('button', 'btn small', '🤖 AI 点评我的流程图');
+    aiRef.type = 'button';
+    aiRef.addEventListener('click', function () { self.askAIOutline(); });
+    actions.appendChild(aiRef);
     var codeBtn = UI.el('button', 'btn small primary', '✍️ 去写代码');
     codeBtn.type = 'button';
     codeBtn.addEventListener('click', function () { self.openCode(); });
@@ -502,6 +506,25 @@
     card.appendChild(body);
     back.appendChild(card);
     doc.body.appendChild(back);
+  };
+
+  Think.askAIOutline = function () {
+    if (!CC.ApiView || !CC.ApiView.ensure()) return;
+    var p = this.problemById(this.problemId);
+    if (!p) return;
+    var r = this.check(p);
+    var byId = {};
+    this.nodes.forEach(function (n) { byId[n.id] = n; });
+    var nodes = this.nodes.map(function (n) { return '- [' + n.type + '] ' + (n.text || ''); }).join('\n');
+    var edges = this.edges.map(function (e) {
+      var a = byId[e.from], b = byId[e.to];
+      return (a ? a.text : '?') + ' → ' + (b ? b.text : '?') + (e.label ? ' [' + e.label + ']' : '');
+    }).join('\n');
+    CC.ApiView.ask({
+      title: '🤖 AI 点评我的思路',
+      system: '你是 C 语言思维教练。用简体中文，最多 8 行。只点评流程图的思路（结构、顺序、条件、循环、遗漏），不要直接写出完整代码。',
+      prompt: '题目：' + p.title + '\n' + p.brief + '\n\n我的流程图节点：\n' + (nodes || '（空）') + '\n\n连线：\n' + (edges || '（空）') + '\n\n自动检查结果：\n' + (r.ok ? '通过' : r.issues.join('\n'))
+    });
   };
 
   Think.enter = function () {

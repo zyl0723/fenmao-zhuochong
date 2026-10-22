@@ -116,6 +116,7 @@
       worldFlags: {},           // 桥修好了 / 花园开花了 / 大门开了…
       badges: {},               // 毕业徽章等
       thinkPassed: {},          // 思维训练：哪些题的流程图思路通过了
+      drills: { answered: {}, wrong: {}, streak: 0, best: 0, total: 0 },  // 函数闯关
       world: { area: 'home', x: 6.5, y: 8.4, dir: 'down' },
       achievements: {},
       streak: { days: 1, lastDay: today() },

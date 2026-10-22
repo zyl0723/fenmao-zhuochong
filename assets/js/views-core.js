@@ -56,9 +56,11 @@
         ['lesson', '继续上课'],
         ['flow', '🧭 思维训练'],
         ['funcs', '📚 函数手册'],
+        ['drills', '🧪 函数闯关'],
         ['bugs', '🐛 虫虫洞'],
-        ['playground', '🧪 练习场'],
+        ['playground', '⌨️ 自由练习'],
         ['room', '🏠 猫窝'],
+        ['api', '🔌 API'],
         ['about', 'ℹ️ 关于']
       ];
       for (var i = 0; i < items.length; i++) {
@@ -117,6 +119,8 @@
       if (name === 'world' && CC.WorldView) CC.WorldView.enter();
       if (name === 'flow' && CC.ThinkView) CC.ThinkView.enter();
       if (name === 'funcs' && CC.FuncView) CC.FuncView.enter();
+      if (name === 'drills' && CC.DrillsView) CC.DrillsView.enter();
+      if (name === 'api' && CC.ApiView) CC.ApiView.enter();
       if (name === 'lesson') this.renderLessonContent();
       if (name === 'room') this.renderRoom();
       if (name === 'about') this.renderAbout();

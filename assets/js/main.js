@@ -72,7 +72,7 @@
       if (!h) return;
       if (h.indexOf('lesson-') === 0) { CC.UI.openLesson(h.slice(7)); return; }
       if (h.indexOf('bug-') === 0) { CC.UI.showView('bugs'); CC.UI.openBug(h.slice(4)); return; }
-      if (['world', 'map', 'lesson', 'flow', 'funcs', 'bugs', 'playground', 'room', 'about'].indexOf(h) >= 0) { CC.UI.showView(h); return; }
+      if (['world', 'map', 'lesson', 'flow', 'funcs', 'drills', 'bugs', 'playground', 'room', 'api', 'about'].indexOf(h) >= 0) { CC.UI.showView(h); return; }
     }
     applyHash();
     root.addEventListener('hashchange', applyHash);

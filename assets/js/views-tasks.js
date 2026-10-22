@@ -110,6 +110,20 @@
     btnRow.appendChild(submitBtn);
     btnRow.appendChild(el('div', 'spacer'));
     btnRow.appendChild(hintBtn);
+    var aiBtn = el('button', 'btn small ghost', '🤖 问 AI 助教');
+    aiBtn.type = 'button';
+    aiBtn.addEventListener('click', function () {
+      if (!CC.ApiView) return;
+      if (!CC.ApiView.ensure()) return;
+      var run = CC.Grade.runCode(editor.getValue(), stdinInput.value);
+      var detail = '题目：' + (task.title || '') + '\n要求：' + (task.brief || '') + '\n\n我的代码：\n' + editor.getValue() + '\n\n运行结果：' + (run.ok ? (run.output || '（没有输出）') : (run.error.message + '\n' + (run.error.hint || '')));
+      CC.ApiView.ask({
+        title: '🤖 AI 助教',
+        system: '你是面向零基础学习者的 C 语言助教。用简体中文回答，最多 6 行。只给提示和检查方向，不要直接给出完整答案，也不要整段改写代码。',
+        prompt: detail
+      });
+    });
+    btnRow.appendChild(aiBtn);
     btnRow.appendChild(solBtn);
     btnRow.appendChild(resetBtn);
     card.appendChild(btnRow);

@@ -261,6 +261,17 @@
         var why = UI.el('span', 'tiny muted', '需要文件 / 内存 / 结构体等进阶能力，请用 gcc、Dev-C++ 或 VS Code 练习。');
         actions.appendChild(why);
       }
+      var aiMore = UI.el('button', 'btn small', '🤖 让 AI 讲细一点');
+      aiMore.type = 'button';
+      aiMore.addEventListener('click', function () {
+        if (!CC.ApiView || !CC.ApiView.ensure()) return;
+        CC.ApiView.ask({
+          title: '🤖 ' + f.name + ' 深入讲解',
+          system: '你是 C 语言助教，用简体中文回答，最多 8 行。只讲标准 C 里真实存在的行为，不要编造标准库函数。',
+          prompt: '请结合这个函数讲细一点：\n名称：' + f.name + '\n头文件：' + f.header + '\n原型：' + f.proto + '\n作用：' + f.brief + '\n注意：' + ((f.notes || []).join('；')) + '\n请给 1 个容易踩的坑和 1 个简短例子。'
+        });
+      });
+      actions.appendChild(aiMore);
       box.appendChild(actions);
 
       if (f.related && f.related.length) {
