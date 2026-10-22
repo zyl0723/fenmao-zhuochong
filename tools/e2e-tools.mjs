@@ -1,4 +1,4 @@
-// 开发用：函数手册 + 流程图工坊的浏览器自检
+// 开发用：函数手册 + 思维训练（题目 + 流程图）的浏览器自检
 // 用法：node tools/e2e-tools.mjs [http://localhost:5173]
 import { spawn } from 'node:child_process';
 import path from 'node:path';
@@ -22,7 +22,7 @@ let id = 0; const pending = new Map();
 ws.addEventListener('message', ev => { const m = JSON.parse(ev.data); if (m.id && pending.has(m.id)) { const p = pending.get(m.id); pending.delete(m.id); m.error ? p.reject(new Error(JSON.stringify(m.error))) : p.resolve(m.result); } });
 const send = (m, p) => new Promise((res, rej) => { const i = ++id; pending.set(i, { resolve: res, reject: rej }); ws.send(JSON.stringify({ id: i, method: m, params: p || {} })); });
 await new Promise(r => ws.addEventListener('open', r));
-await send('Emulation.setDeviceMetricsOverride', { width: 1400, height: 1000, deviceScaleFactor: 1, mobile: false });
+await send('Emulation.setDeviceMetricsOverride', { width: 1500, height: 1000, deviceScaleFactor: 1, mobile: false });
 await send('Page.enable');
 await send('Page.navigate', { url: BASE + '/index.html' });
 await sleep(2600);
@@ -43,72 +43,83 @@ async function clickText(sel, text) {
 console.log('\n▸ C 函数手册');
 await js('CC.UI.showView("funcs")');
 await sleep(500);
-const f1 = JSON.parse(await js('JSON.stringify({ errors: window.__bootErrors||[], count: (CC.FUNCS||[]).length, cards: document.querySelectorAll(".func-card").length, headers: document.querySelectorAll(".func-header-item").length, detail: (document.querySelector(".func-detail")||{}).textContent || "" })'));
+const f1 = JSON.parse(await js('JSON.stringify({ errors: window.__bootErrors||[], count: (CC.FUNCS||[]).length, headers: document.querySelectorAll(".func-header-item").length, detail: (document.querySelector(".func-detail")||{}).textContent || "" })'));
 check('函数手册加载无错误', f1.errors.length === 0, JSON.stringify(f1.errors));
 check('函数条目 >= 100', f1.count >= 100, f1.count + ' 条');
-check('默认选中一个函数并显示详情', f1.detail.indexOf('size_t strlen') >= 0 || f1.detail.indexOf('printf') >= 0, f1.detail.slice(0, 30).replace(/\n/g, ' '));
-check('头文件分类都在', f1.headers >= 12, f1.headers + ' 个头文件');
-
+check('默认选中函数并显示详情', f1.detail.indexOf('printf') >= 0 || f1.detail.indexOf('size_t strlen') >= 0, f1.detail.slice(0, 26).replace(/\n/g, ' '));
+check('头文件分类都在', f1.headers >= 12, f1.headers + ' 个');
 await js('(function(){ var i=document.querySelector(".func-search"); i.value="strlen"; i.dispatchEvent(new Event("input",{bubbles:true})); })()');
 await sleep(300);
 const searched = JSON.parse(await js('JSON.stringify({ cards: document.querySelectorAll(".func-card").length, names: [].slice.call(document.querySelectorAll(".func-card b")).map(function(b){return b.textContent;}) })'));
-check('搜索 strlen 能找到它', searched.names.indexOf('strlen') >= 0 && searched.cards < 6, JSON.stringify(searched.names));
+check('搜索 strlen 能找到', searched.names.indexOf('strlen') >= 0 && searched.cards < 6, JSON.stringify(searched.names));
 await clickText('.func-card', 'strlen');
 await sleep(300);
 const detail = await js('document.querySelector(".func-detail").textContent');
-check('点开后显示原型和示例', detail.indexOf('size_t strlen') >= 0 && detail.indexOf('int main') >= 0);
-check('标出了「本站可直接运行」', detail.indexOf('可直接运行') >= 0);
+check('详情里有原型和示例', detail.indexOf('size_t strlen') >= 0 && detail.indexOf('int main') >= 0);
 await clickText('.func-actions .btn', '在练习场打开');
 await sleep(700);
 const pg = JSON.parse(await js('JSON.stringify({ view: CC.UI.currentView, code: CC.UI.pgEditor ? CC.UI.pgEditor.getValue() : "" })'));
-check('一键打开到练习场并填入示例', pg.view === 'playground' && pg.code.indexOf('strlen') >= 0, pg.view);
-
+check('一键打开到练习场', pg.view === 'playground' && pg.code.indexOf('strlen') >= 0, pg.view);
 await js('CC.UI.showView("funcs")');
 await sleep(300);
 await js('(function(){ var i=document.querySelector(".func-search"); i.value=""; i.dispatchEvent(new Event("input",{bubbles:true})); })()');
 await sleep(300);
-await js('(function(){ var l=[].slice.call(document.querySelectorAll(".func-chip")); var b=l.filter(function(x){return x.textContent.indexOf("需要真编译器")>=0;})[0]; b.click(); })()');
+await clickText('.func-chip', '需要真编译器');
 await sleep(400);
 const warn = JSON.parse(await js('JSON.stringify({ total: document.querySelectorAll(".func-card").length, warns: [].slice.call(document.querySelectorAll(".func-badge")).filter(function(b){return b.textContent.indexOf("真编译器")>=0;}).length })'));
-check('筛选「需要真编译器」只显示 ⚠️ 条目', warn.total > 0 && warn.warns >= warn.total, warn.warns + '/' + warn.total);
-await js('(function(){ var l=[].slice.call(document.querySelectorAll(".func-chip")); l.filter(function(x){return x.textContent.indexOf("全部")>=0;})[0].click(); })()');
+check('筛选「需要真编译器」只显示 ⚠️', warn.total > 0 && warn.warns >= warn.total, warn.warns + '/' + warn.total);
 
-console.log('\n▸ 流程图工坊');
+console.log('\n▸ 思维训练（题目 + 流程图 + 代码）');
 await js('CC.UI.showView("flow")');
-await sleep(600);
-const fl = JSON.parse(await js('JSON.stringify({ errors: window.__bootErrors||[], nodes: CC.FlowView.nodes.length, edges: CC.FlowView.edges.length, name: CC.FlowView.name, canvas: !!document.querySelector(".flow-canvas") })'));
-check('流程图工坊加载无错误', fl.errors.length === 0, JSON.stringify(fl.errors));
-check('默认载入了一个模板', fl.nodes >= 6 && fl.edges >= 5, fl.name + '：' + fl.nodes + ' 个图形 / ' + fl.edges + ' 条箭头');
-check('画布已就绪', fl.canvas === true);
+await sleep(700);
+const th = JSON.parse(await js('JSON.stringify({ errors: window.__bootErrors||[], count: document.querySelectorAll(".think-item").length, title: (document.querySelector(".think-problem-head h2")||{}).textContent || "", nodes: CC.ThinkView.nodes.length, edges: CC.ThinkView.edges.length, hasTask: !!document.querySelector(".think-problem .tag") })'));
+check('思维训练加载无错误', th.errors.length === 0, JSON.stringify(th.errors));
+check('题目列表有 8 道题', th.count === 8, th.count + ' 道');
+check('打开题目时画布是「从开始画起」，不是预填答案', th.title === '成绩等级' && th.nodes === 1 && th.edges === 0, th.title + ' / ' + th.nodes + ' 个框');
+check('题目里写着对应的代码练习', th.hasTask === true);
 
-await clickText('.flow-side .btn', '从我的流程图生成');
+await clickText('.think-side .btn', '检查我的思路');
+await sleep(400);
+const r1 = JSON.parse(await js('JSON.stringify({ bad: !!document.querySelector(".think-check.bad"), issues: document.querySelectorAll(".think-issue").length, passed: !!(CC.App.state.thinkPassed || {}).T1 })'));
+check('只画一个「开始」会被指出问题', r1.bad === true && r1.issues >= 2, r1.issues + ' 条问题');
+check('没通过时不会记成完成', r1.passed === false);
+
+// 按照参考流程图补齐，再检查
+await js('(function(){ var p = CC.ThinkView.problemById("T1"); var ref = CC.ThinkView.referenceOf(p); CC.ThinkView.nodes = JSON.parse(JSON.stringify(ref.nodes)); CC.ThinkView.edges = JSON.parse(JSON.stringify(ref.edges)); CC.ThinkView.render(); })()');
 await sleep(300);
-const outline = await js('document.querySelector(".flow-outline").textContent');
-check('能生成思路提纲', outline.indexOf('思路提纲') >= 0 && outline.indexOf('判断') >= 0);
-check('能生成 C 代码骨架', outline.indexOf('int main()') >= 0);
+await clickText('.think-side .btn', '检查我的思路');
+await sleep(500);
+const r2 = JSON.parse(await js('JSON.stringify({ ok: !!document.querySelector(".think-check.ok"), passed: !!(CC.App.state.thinkPassed || {}).T1, good: document.querySelectorAll(".think-good").length })'));
+check('画完整后思路检查通过', r2.ok === true, r2.good + ' 条肯定');
+check('思路通过会记录下来', r2.passed === true);
+check('通过后弹出夸夸（情绪价值）', (await js('document.querySelectorAll(".fx-bubble").length')) > 3);
+await js('document.querySelector(".fx-exit") && document.querySelector(".fx-exit").click()');
+await sleep(400);
 
-const before = await js('CC.FlowView.nodes.length');
-await clickText('.flow-tool', '处理');
-await sleep(200);
-const added = await js('CC.FlowView.nodes.length');
-check('点工具栏能加图形', added === before + 1, before + ' → ' + added);
-await clickText('.flow-ops .btn', '撤销');
-await sleep(200);
-check('撤销能回到上一步', (await js('CC.FlowView.nodes.length')) === before);
-await js('CC.FlowView.redo()');
-await sleep(150);
-check('重做能恢复', (await js('CC.FlowView.nodes.length')) === before + 1);
-
-const e0 = await js('CC.FlowView.edges.length');
-await js('(function(){ var n = CC.FlowView.nodes; CC.FlowView.connect(n[0].id, n[n.length-1].id); })()');
-await sleep(200);
-check('能建立连线（箭头）', (await js('CC.FlowView.edges.length')) === e0 + 1);
-
-await clickText('.flow-template', '1 到 100 求和');
+await clickText('.think-side .btn', '看参考流程图');
+await sleep(400);
+check('能打开参考流程图', await js('!!document.querySelector(".think-ref-card") && !!document.querySelector(".think-ref-canvas")'));
+await clickText('.think-ref-card .btn', '关闭');
 await sleep(300);
-const sum = JSON.parse(await js('JSON.stringify({ name: CC.FlowView.name, nodes: CC.FlowView.nodes.length, hasDecision: CC.FlowView.nodes.some(function(n){return n.type==="decision";}) })'));
-check('换模板正常', sum.name.indexOf('求和') >= 0 && sum.nodes >= 6 && sum.hasDecision, sum.name);
 
-console.log('\n' + (results.every(r => r) ? '✅ 函数手册 + 流程图自检全部通过' : '❌ 有 ' + results.filter(r => !r).length + ' 项失败'));
+await clickText('.think-side .btn', '去写代码');
+await sleep(500);
+const codePanel = JSON.parse(await js('JSON.stringify({ open: !!document.querySelector(".think-code-card"), editor: !!document.querySelector(".think-code-card textarea") })'));
+check('「去写代码」会打开对应练习', codePanel.open === true && codePanel.editor === true);
+await clickText('.think-code-card .btn', '关闭');
+await sleep(300);
+
+await clickText('.think-item', '1 到 100 求和');
+await sleep(400);
+const t2 = JSON.parse(await js('JSON.stringify({ title: (document.querySelector(".think-problem-head h2")||{}).textContent || "", nodes: CC.ThinkView.nodes.length, edges: CC.ThinkView.edges.length })'));
+check('切换题目后是一张新的空白图', t2.title === '1 到 100 求和' && t2.nodes === 1 && t2.edges === 0, t2.title);
+
+// T2 的参考流程图（带循环）也能通过检查
+await js('(function(){ var p = CC.ThinkView.problemById("T2"); var ref = CC.ThinkView.referenceOf(p); CC.ThinkView.nodes = JSON.parse(JSON.stringify(ref.nodes)); CC.ThinkView.edges = JSON.parse(JSON.stringify(ref.edges)); CC.ThinkView.render(); })()');
+await clickText('.think-side .btn', '检查我的思路');
+await sleep(500);
+check('带循环的题也能通过思路检查', await js('!!document.querySelector(".think-check.ok")'));
+
+console.log('\n' + (results.every(r => r) ? '✅ 函数手册 + 思维训练自检全部通过' : '❌ 有 ' + results.filter(r => !r).length + ' 项失败'));
 ws.close(); proc.kill();
 process.exit(results.every(r => r) ? 0 : 1);

@@ -54,7 +54,7 @@
         ['world', '🗺️ 世界冒险'],
         ['map', '📖 故事书'],
         ['lesson', '继续上课'],
-        ['flow', '🧭 流程图'],
+        ['flow', '🧭 思维训练'],
         ['funcs', '📚 函数手册'],
         ['bugs', '🐛 虫虫洞'],
         ['playground', '🧪 练习场'],
@@ -115,7 +115,7 @@
         btns[j].classList.toggle('on', k === name || (k === 'lesson' && name === 'lesson'));
       }
       if (name === 'world' && CC.WorldView) CC.WorldView.enter();
-      if (name === 'flow' && CC.FlowView) CC.FlowView.enter();
+      if (name === 'flow' && CC.ThinkView) CC.ThinkView.enter();
       if (name === 'funcs' && CC.FuncView) CC.FuncView.enter();
       if (name === 'lesson') this.renderLessonContent();
       if (name === 'room') this.renderRoom();

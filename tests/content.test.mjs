@@ -21,7 +21,9 @@ const FILES = [
   'assets/js/content-funcs-2.js',
   'assets/js/content-funcs-3.js',
   'assets/js/content-funcs-4.js',
-  'assets/js/flowchart.js'
+  'assets/js/flowchart.js',
+  'assets/js/content-think.js',
+  'assets/js/views-think.js'
 ].filter(f => fs.existsSync(path.join(ROOT, f)));
 
 const sandbox = { console };
@@ -451,6 +453,80 @@ describe('流程图工坊：模板', () => {
       const labelled = tpl.edges.filter(e => decisions.indexOf(e.from) >= 0 && (e.label === '是' || e.label === '否'));
       if (decisions.length) ok(labelled.length >= decisions.length, tpl.name + ' 有判断没标是/否');
     });
+  });
+});
+
+describe('思维训练：题目与参考流程图', () => {
+  const P = CC.THINK_PROBLEMS || [];
+
+  test('至少有 8 道思维训练题', () => {
+    ok(P.length >= 8, '题目太少：' + P.length);
+  });
+
+  test('每道题都写全了（题干/例子/知识点/提示/对应代码练习）', () => {
+    const taskIds = {};
+    LESSONS.forEach(l => l.tasks.forEach(t => { taskIds[t.id] = t; }));
+    P.forEach(p => {
+      ok(p.id && p.title, '题目缺少编号或标题');
+      ok(p.brief && p.brief.length >= 10, p.title + ' 缺少题干');
+      ok(Array.isArray(p.examples) && p.examples.length, p.title + ' 缺少输入输出例子');
+      ok(p.teach && p.teach.length >= 10, p.title + ' 缺少知识点讲解');
+      ok(Array.isArray(p.hints) && p.hints.length, p.title + ' 缺少提示');
+      ok(p.taskId && taskIds[p.taskId], p.title + ' 对应的代码练习不存在：' + p.taskId);
+      ok(p.needs && p.needs.minNodes, p.title + ' 缺少检查要求');
+    });
+  });
+
+  test('题目编号唯一，并且每种结构都有覆盖', () => {
+    const seen = new Set();
+    let decisions = 0, loops = 0, nested = 0;
+    P.forEach(p => {
+      ok(!seen.has(p.id), '题目编号重复：' + p.id);
+      seen.add(p.id);
+      if (p.needs.decisions) decisions++;
+      if (p.needs.loop) loops++;
+      if (p.needs.cycles > 1) nested++;
+    });
+    ok(decisions >= 6, '练判断的题太少');
+    ok(loops >= 4, '练循环的题太少');
+    ok(nested >= 1, '缺少练嵌套循环的题');
+  });
+
+  test('每道题都有参考流程图，并且结构合法', () => {
+    P.forEach(p => {
+      const ref = CC.ThinkView.referenceOf.call({ referenceOf: CC.ThinkView.referenceOf, problemById: CC.ThinkView.problemById, problems: P }, p);
+      ok(ref && ref.nodes && ref.nodes.length >= 3, p.title + ' 缺少参考流程图');
+      const ids = {};
+      ref.nodes.forEach(n => { ids[n.id] = true; ok(n.type && n.text, p.title + ' 参考图里有不完整的框'); });
+      ref.edges.forEach(e => {
+        ok(ids[e.from] && ids[e.to], p.title + ' 参考图里有断掉的箭头');
+      });
+    });
+  });
+
+  test('每道题的参考流程图都能通过它自己的「思路检查」', () => {
+    P.forEach(p => {
+      const ref = (function () {
+        if (p.reference) return p.reference;
+        const tpls = CC.FLOW_TEMPLATES || [];
+        for (const t of tpls) if (t.id === p.referenceTemplate) return { nodes: t.nodes, edges: t.edges };
+        return null;
+      })();
+      const probe = Object.create(CC.ThinkView);
+      probe.nodes = JSON.parse(JSON.stringify(ref.nodes));
+      probe.edges = JSON.parse(JSON.stringify(ref.edges));
+      const r = probe.check(p);
+      if (!r.ok) throw new Error(p.title + ' 的参考流程图没通过自己的检查：' + r.issues.join(' / '));
+    });
+  });
+
+  test('空画布会被判为思路不完整', () => {
+    const probe = Object.create(CC.ThinkView);
+    probe.nodes = [{ id: 's', type: 'start', x: 0, y: 0, text: '开始' }];
+    probe.edges = [];
+    const r = probe.check(P[0]);
+    ok(!r.ok, '只有开始也能通过？');
+    ok(r.issues.length >= 2, '应该列出多个问题');
   });
 });
 

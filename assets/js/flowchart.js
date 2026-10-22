@@ -796,7 +796,18 @@
 
     centerCanvas: function () {
       if (!this.wrapEl) return;
-      this.wrapEl.scrollLeft = 300;
+      if (!this.nodes || !this.nodes.length) return;
+      var minX = 1e9, maxX = -1e9;
+      for (var i = 0; i < this.nodes.length; i++) {
+        var s = SHAPES[this.nodes[i].type] || SHAPES.process;
+        minX = Math.min(minX, this.nodes[i].x);
+        maxX = Math.max(maxX, this.nodes[i].x + s.w);
+      }
+      var viewW = this.wrapEl.clientWidth || 800;
+      var contentW = maxX - minX;
+      var target = minX - 24;
+      if (contentW < viewW) target = minX - Math.max(0, (viewW - contentW) / 2);
+      this.wrapEl.scrollLeft = Math.max(0, Math.round(target));
       this.wrapEl.scrollTop = 0;
     },
 
