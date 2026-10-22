@@ -16,7 +16,12 @@ const FILES = [
   'assets/js/world-art.js',
   'assets/js/world-data.js',
   'assets/js/puzzles.js',
-  'assets/js/puzzles-b.js'
+  'assets/js/puzzles-b.js',
+  'assets/js/content-funcs-1.js',
+  'assets/js/content-funcs-2.js',
+  'assets/js/content-funcs-3.js',
+  'assets/js/content-funcs-4.js',
+  'assets/js/flowchart.js'
 ].filter(f => fs.existsSync(path.join(ROOT, f)));
 
 const sandbox = { console };
@@ -324,6 +329,128 @@ describe('判题严格度：空行不能蒙混过关', () => {
       const r = G.gradeTask(t, t.solution);
       ok(r.pass, t.id + ' 的参考答案在新的严格判题下不通过了：' + r.message.split('\n')[0]);
     }));
+  });
+});
+
+describe('函数手册：内容与可运行性', () => {
+  const FX = CC.FUNCS || [];
+  const HDR = CC.FUNC_HEADERS || {};
+
+  test('函数手册条目足够多', () => {
+    ok(FX.length >= 90, '函数条目太少：' + FX.length);
+  });
+
+  test('每个条目都写全了（名字 / 头文件 / 原型 / 作用 / 参数 / 返回值）', () => {
+    FX.forEach(f => {
+      ok(f.id && f.name, '有条目缺少 id 或 name');
+      ok(f.header, f.name + ' 缺少 header');
+      ok(HDR[f.header], f.name + ' 用到了不存在的头文件 ' + f.header);
+      ok(f.proto, f.name + ' 缺少原型');
+      ok(f.brief && f.brief.length >= 4, f.name + ' 缺少一句话说明');
+      ok(f.params && f.returns, f.name + ' 缺少参数或返回值说明');
+      ok(Array.isArray(f.notes) && f.notes.length >= 1, f.name + ' 缺少使用要点/坑');
+      ok(typeof f.example === 'string' && f.example.indexOf('int main') >= 0, f.name + ' 缺少示例代码');
+      ok(f.supported === true || f.supported === false, f.name + ' 缺少 supported 标记');
+    });
+  });
+
+  test('id 唯一', () => {
+    const seen = new Set();
+    FX.forEach(f => { ok(!seen.has(f.id), '重复的函数条目：' + f.id); seen.add(f.id); });
+  });
+
+  test('标了「本站可运行」的函数，解释器里真的存在', () => {
+    const builtins = new Set(CC.builtinNames());
+    FX.forEach(f => {
+      if (!f.supported) return;
+      if (f.kind === 'macro' || f.kind === 'operator') return;
+      ok(builtins.has(f.name), f.name + ' 标了可运行，但解释器里没有这个函数');
+    });
+  });
+
+  test('标了「本站可运行」的示例必须真的能跑通', () => {
+    FX.forEach(f => {
+      if (!f.supported) return;
+      const r = CC.run(f.example, { stdin: f.demoStdin || '', fixedTime: 1735689600 });
+      if (!r.ok) {
+        throw new Error(f.name + ' 的示例跑不起来：' + r.error.message + ' | ' + (r.error.hint || '') + '\n代码：\n' + f.example);
+      }
+    });
+  });
+
+  test('标了「需要真编译器」的函数，示例里没有用到本站不支持的语法也能正常保存', () => {
+    FX.forEach(f => {
+      if (f.supported) return;
+      ok(f.example.length > 10, f.name + ' 的示例太短');
+    });
+  });
+
+  test('每个头文件都有介绍，并且至少有一个函数', () => {
+    const used = {};
+    FX.forEach(f => { used[f.header] = true; });
+    Object.keys(HDR).forEach(id => {
+      ok(HDR[id].title && HDR[id].summary && HDR[id].when, id + ' 缺少介绍');
+    });
+    Object.keys(used).forEach(id => ok(HDR[id], id + ' 没有对应的头文件介绍'));
+  });
+
+  test('支持 / 不支持的条目都有，方便新手分清', () => {
+    const sup = FX.filter(f => f.supported).length;
+    const no = FX.filter(f => !f.supported).length;
+    ok(sup >= 50, '本站可运行的函数太少：' + sup);
+    ok(no >= 20, '需要真编译器的函数太少：' + no);
+  });
+});
+
+describe('流程图工坊：模板', () => {
+  const T = CC.FLOW_TEMPLATES || [];
+
+  test('至少准备了 6 个模板', () => {
+    ok(T.length >= 6, '模板太少：' + T.length);
+  });
+
+  test('每个模板都有名字、说明、参考代码、图形和连线', () => {
+    T.forEach(tpl => {
+      ok(tpl.id && tpl.name && tpl.desc, '模板缺少基本信息：' + tpl.id);
+      ok(tpl.code && tpl.code.indexOf('int main') >= 0, tpl.name + ' 缺少参考代码');
+      ok(Array.isArray(tpl.nodes) && tpl.nodes.length >= 5, tpl.name + ' 图形太少');
+      ok(Array.isArray(tpl.edges) && tpl.edges.length >= 4, tpl.name + ' 连线太少');
+    });
+  });
+
+  test('模板里的图形 id 唯一，类型合法', () => {
+    const types = ['start', 'process', 'decision', 'io'];
+    T.forEach(tpl => {
+      const seen = new Set();
+      tpl.nodes.forEach(n => {
+        ok(!seen.has(n.id), tpl.name + ' 里图形 id 重复：' + n.id);
+        seen.add(n.id);
+        ok(types.indexOf(n.type) >= 0, tpl.name + ' 里图形类型不合法：' + n.type);
+        ok(typeof n.x === 'number' && typeof n.y === 'number', tpl.name + ' 里图形缺少坐标');
+        ok(n.x >= 0 && n.y >= 0, tpl.name + ' 里图形坐标是负数');
+        ok(n.text, tpl.name + ' 里图形缺少文字');
+      });
+    });
+  });
+
+  test('所有连线的两端都存在，而且有开始、有结束', () => {
+    T.forEach(tpl => {
+      const ids = new Set(tpl.nodes.map(n => n.id));
+      tpl.edges.forEach(e => {
+        ok(ids.has(e.from), tpl.name + ' 的连线起点不存在：' + e.from);
+        ok(ids.has(e.to), tpl.name + ' 的连线终点不存在：' + e.to);
+      });
+      ok(tpl.nodes.some(n => String(n.text).indexOf('开始') >= 0), tpl.name + ' 没有「开始」');
+      ok(tpl.nodes.some(n => String(n.text).indexOf('结束') >= 0), tpl.name + ' 没有「结束」');
+    });
+  });
+
+  test('判断的出口标了「是 / 否」', () => {
+    T.forEach(tpl => {
+      const decisions = tpl.nodes.filter(n => n.type === 'decision').map(n => n.id);
+      const labelled = tpl.edges.filter(e => decisions.indexOf(e.from) >= 0 && (e.label === '是' || e.label === '否'));
+      if (decisions.length) ok(labelled.length >= decisions.length, tpl.name + ' 有判断没标是/否');
+    });
   });
 });
 

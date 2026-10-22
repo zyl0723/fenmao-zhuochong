@@ -382,4 +382,43 @@ describe('9. 错误提示（面向初学者）', () => {
   });
 });
 
+describe('10. 标准库函数（函数手册里演示的那批）', () => {
+  test('sprintf：把格式化结果写进字符数组', () => {
+    eq(out('#include <stdio.h>\nint main(){ char b[50]; sprintf(b, "%d + %d = %d", 3, 4, 7); printf("%s\\n", b); return 0; }'), '3 + 4 = 7\n');
+  });
+
+  test('strncmp / strncpy / strncat', () => {
+    const src = '#include <stdio.h>\n#include <string.h>\nint main(){ char a[30] = "ab"; strncat(a, "cdef", 2); char b[10]; strncpy(b, a, 4); b[4] = 0; printf("%s %s\\n", a, b); return 0; }';
+    eq(out(src), 'abcd abcd\n');
+  });
+
+  test('strncmp 只比较前 n 个字符', () => {
+    eq(out('#include <stdio.h>\n#include <string.h>\nint main(){ printf("%d %d %d\\n", strncmp("abc", "abd", 2), strncmp("abc", "abd", 3), strncmp("abc", "abcx", 3)); return 0; }'), '0 -1 0\n');
+  });
+
+  test('strchr / strstr 返回指向找到位置的指针', () => {
+    eq(out('#include <stdio.h>\n#include <string.h>\nint main(){ char s[] = "hello world"; char *p = strchr(s, 119); printf("%s\\n", p); char *q = strstr(s, "wor"); printf("%s %d\\n", q, q - s); return 0; }'), 'world\nworld 6\n');
+  });
+
+  test('ctype：分类与大小写转换', () => {
+    eq(out('#include <stdio.h>\n#include <ctype.h>\nint main(){ printf("%d %d %d %d %d\\n", isalpha(65), isdigit(50), isspace(32), isupper(97), ispunct(33)); printf("%c\\n", toupper(97)); return 0; }'), '1 1 1 0 1\nA\n');
+  });
+
+  test('math：三角函数 / 对数 / 指数 / 立方根 / hypot', () => {
+    eq(out('#include <stdio.h>\n#include <math.h>\nint main(){ printf("%.2f %.2f %.2f %.2f\\n", sin(0), cos(0), sqrt(16), cbrt(27)); printf("%.2f %.2f %.2f\\n", log(1), exp(0), hypot(3,4)); return 0; }'), '0.00 1.00 4.00 3.00\n0.00 1.00 5.00\n');
+  });
+
+  test('limits.h 的常量', () => {
+    eq(out('#include <stdio.h>\n#include <limits.h>\nint main(){ printf("%d %d %d\\n", INT_MAX, INT_MIN, UCHAR_MAX); return 0; }'), '2147483647 -2147483648 255\n');
+  });
+
+  test('isnan / isinf，以及 nan / inf 的打印', () => {
+    eq(out('#include <stdio.h>\n#include <math.h>\nint main(){ printf("%d %d %f %f\\n", isnan(log(-1.0)), isinf(exp(1000.0)), log(-1.0), exp(1000.0)); return 0; }'), '1 1 nan inf\n');
+  });
+
+  test('atof / labs', () => {
+    eq(out('#include <stdio.h>\n#include <stdlib.h>\nint main(){ printf("%.2f %d\\n", atof("3.14abc"), labs(-42)); return 0; }'), '3.14 42\n');
+  });
+});
+
 summary();

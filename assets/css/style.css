@@ -744,3 +744,98 @@ table.data code { background: var(--pink-mist); padding: 0 4px; border-radius: 4
   .fx-banner { font-size: 22px; padding: 12px 20px; }
   .fx-bubble { font-size: 13px; padding: 7px 10px; }
 }
+/* ==========================================================================
+   C 函数手册
+   ========================================================================== */
+
+.func-layout { display: grid; grid-template-columns: 250px minmax(0, 1fr) 380px; gap: 16px; align-items: start; }
+.func-left, .func-right { position: sticky; top: 76px; max-height: calc(100vh - 90px); overflow: auto; }
+.func-headers { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+.func-header-item { display: flex; flex-direction: column; gap: 1px; text-align: left; border: 2px solid var(--line); background: var(--panel-2); border-radius: 10px; padding: 7px 10px; cursor: pointer; }
+.func-header-item:hover { border-color: var(--pink-soft); background: #fff; }
+.func-header-item b { font-size: 13px; font-family: var(--mono); }
+.func-header-item small { font-size: 11.5px; color: var(--ink-soft); }
+.func-header-item.all { background: var(--pink-mist); border-color: var(--pink-soft); }
+.func-search-card { position: sticky; top: 76px; z-index: 5; padding: 12px 14px; }
+.func-search { width: 100%; padding: 11px 14px; border: 3px solid var(--pink-soft); border-radius: 12px; font-size: 15px; background: #fff; color: var(--ink); outline: none; }
+.func-search:focus { border-color: var(--pink); }
+.func-chips { display: flex; gap: 7px; flex-wrap: wrap; margin-top: 9px; }
+.func-chip { font-size: 12.5px; padding: 4px 11px; border-radius: 999px; border: 2px solid var(--line-2); background: var(--panel); color: var(--ink-soft); cursor: pointer; }
+.func-chip.on { background: var(--pink); border-color: var(--pink-deep); color: #fff; }
+.func-count { font-size: 12px; color: var(--ink-soft); font-family: var(--mono); margin-top: 8px; }
+.func-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(235px, 1fr)); gap: 10px; margin-top: 14px; }
+.func-card { text-align: left; border: 2px solid var(--line); background: var(--panel); border-radius: 12px; padding: 10px 12px; cursor: pointer; }
+.func-card:hover { border-color: var(--pink-soft); box-shadow: var(--shadow-sm); }
+.func-card.on { border-color: var(--pink); background: var(--pink-mist); }
+.func-card-top { display: flex; justify-content: space-between; align-items: center; gap: 6px; }
+.func-card-top b { font-family: var(--mono); font-size: 14.5px; color: var(--pink-dark); }
+.func-badge { flex: 0 0 auto; font-size: 10.5px; padding: 2px 7px; border-radius: 999px; border: 1px solid; }
+.func-badge.ok { background: var(--mint-soft); color: #2f6b55; border-color: #b7dccd; }
+.func-badge.warn { background: var(--amber-soft); color: #8f6421; border-color: #ecd7ab; }
+.func-card-brief { font-size: 12.8px; color: var(--ink-soft); margin: 4px 0 6px; line-height: 1.55; }
+.func-card-meta { display: flex; gap: 5px; flex-wrap: wrap; }
+.func-header-detail { margin-top: 14px; }
+.func-header-detail h3 { font-size: 15.5px; }
+.func-header-detail p { font-size: 13.5px; }
+.func-tips { margin: 4px 0 0 18px; font-size: 12.8px; color: var(--ink-soft); line-height: 1.65; }
+.func-table { font-size: 12.5px; }
+.func-detail { position: sticky; top: 76px; max-height: calc(100vh - 90px); overflow: auto; }
+.func-detail-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; margin-bottom: 6px; }
+.func-detail-head h3 { font-family: var(--mono); font-size: 19px; color: var(--pink-dark); margin: 0; }
+.func-proto { font-family: var(--mono); font-size: 12.5px; background: var(--code-bg-2); color: var(--code-ink); padding: 10px 12px; border-radius: 10px; margin: 9px 0; white-space: pre-wrap; word-break: break-word; }
+.func-field { margin: 10px 0; }
+.func-field-title { font-size: 12.5px; color: var(--pink-dark); font-weight: 700; margin-bottom: 2px; }
+.func-field-body { font-size: 13.3px; line-height: 1.65; }
+.func-actions { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-top: 8px; }
+.func-related { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; margin-top: 12px; }
+.func-rel { font-family: var(--mono); font-size: 12px; padding: 2px 9px; border-radius: 999px; border: 1px solid var(--line-2); background: var(--panel-2); cursor: pointer; color: var(--pink-dark); }
+.func-rel:disabled { opacity: .5; cursor: default; }/* ==========================================================================
+   流程图工坊
+   ========================================================================== */
+
+.flow-layout { display: grid; grid-template-columns: 196px minmax(0, 1fr) 330px; gap: 16px; align-items: start; }
+.flow-tools { position: sticky; top: 76px; padding: 12px; }
+.flow-tool-grid { display: grid; gap: 6px; margin: 8px 0 14px; }
+.flow-tool { display: flex; align-items: center; gap: 9px; padding: 8px 9px; border: 2px solid var(--line); border-radius: 10px; background: var(--panel-2); cursor: pointer; font-size: 12.5px; text-align: left; }
+.flow-tool:hover { border-color: var(--pink-soft); background: #fff; }
+.flow-tool-shape { width: 28px; height: 17px; display: inline-block; flex: 0 0 auto; border: 2px solid; }
+.flow-shape-start { border-radius: 999px; background: #f9cfe0; border-color: #c96b93; }
+.flow-shape-process { background: #dcb891; border-color: #a87c56; }
+.flow-shape-decision { transform: rotate(45deg) scale(.68); background: #ffefc2; border-color: #d9a04c; }
+.flow-shape-io { transform: skewX(-22deg); background: #dcefee; border-color: #7cb9a2; }
+.flow-ops { display: flex; flex-direction: column; gap: 6px; margin: 8px 0 14px; }
+.flow-name { font-family: var(--mono); font-size: 11.5px; color: var(--ink-soft); margin-top: 6px; word-break: break-all; }
+.flow-canvas-wrap { overflow: auto; max-height: 70vh; padding: 0; border-radius: 14px; }
+.flow-canvas { display: block; cursor: grab; touch-action: none; }
+.flow-canvas:active { cursor: grabbing; }
+.flow-side { position: sticky; top: 76px; max-height: calc(100vh - 90px); overflow: auto; }
+.flow-prop textarea.flow-text { width: 100%; font-size: 13px; border: 2px solid var(--line-2); border-radius: 8px; padding: 6px 8px; font-family: var(--text); color: var(--ink); background: #fff; resize: vertical; }
+.flow-edge-labels { display: flex; gap: 6px; margin: 8px 0; }
+.flow-legend { display: flex; flex-direction: column; gap: 7px; margin-top: 6px; }
+.flow-legend-item { display: flex; gap: 9px; align-items: center; font-size: 12.4px; color: var(--ink-soft); line-height: 1.45; }
+.flow-tips { margin: 8px 0 0 18px; font-size: 12.4px; color: var(--ink-soft); line-height: 1.6; }
+.flow-templates { display: flex; flex-direction: column; gap: 6px; margin-top: 6px; }
+.flow-template { display: flex; flex-direction: column; text-align: left; border: 2px solid var(--line); border-radius: 10px; background: var(--panel-2); padding: 7px 10px; cursor: pointer; }
+.flow-template:hover { border-color: var(--pink-soft); background: #fff; }
+.flow-template b { font-size: 12.8px; }
+.flow-template small { font-size: 11.5px; color: var(--ink-soft); }
+.flow-outline { font-family: var(--mono); font-size: 11.8px; white-space: pre-wrap; background: var(--code-bg-2); color: var(--code-ink); border-radius: 10px; padding: 10px; max-height: 320px; overflow: auto; margin-top: 8px; }
+.flow-open-code { margin-top: 8px; }
+.flow-saved-item { display: flex; flex-direction: column; text-align: left; border: 2px solid var(--line); border-radius: 10px; background: var(--panel-2); padding: 8px 10px; margin-bottom: 6px; cursor: pointer; width: 100%; }
+.flow-saved-item:hover { border-color: var(--pink-soft); background: #fff; }
+.flow-saved-item b { font-size: 13.5px; }
+.flow-saved-item small { font-size: 11px; color: var(--ink-soft); }
+
+@media (max-width: 1250px) {
+  .func-layout { grid-template-columns: 220px minmax(0, 1fr); }
+  .func-right { grid-column: 1 / -1; position: static; max-height: none; }
+  .flow-layout { grid-template-columns: 170px minmax(0, 1fr); }
+  .flow-side { grid-column: 1 / -1; position: static; max-height: none; }
+}
+@media (max-width: 900px) {
+  .func-layout, .flow-layout { grid-template-columns: minmax(0, 1fr); }
+  .func-left, .func-right, .flow-tools, .flow-side { position: static; max-height: none; }
+  .func-search-card { position: static; }
+  .func-headers { flex-direction: row; flex-wrap: wrap; }
+  .func-header-item { flex: 1 1 140px; }
+}

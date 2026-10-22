@@ -63,6 +63,18 @@
     defines.set('M_PI', '3.141592653589793');
     defines.set('true', '1');
     defines.set('false', '0');
+    // <limits.h> 里最常用的几个常量（本站没有真的头文件，用宏模拟）
+    defines.set('INT_MAX', '2147483647');
+    defines.set('INT_MIN', '(-2147483647 - 1)');
+    defines.set('LONG_MAX', '9223372036854775807');
+    defines.set('LONG_MIN', '(-9223372036854775807 - 1)');
+    defines.set('SHRT_MAX', '32767');
+    defines.set('SHRT_MIN', '(-32767 - 1)');
+    defines.set('CHAR_MAX', '127');
+    defines.set('CHAR_MIN', '(-127 - 1)');
+    defines.set('UCHAR_MAX', '255');
+    defines.set('USHRT_MAX', '65535');
+    defines.set('UINT_MAX', '4294967295');
     var includes = [];
     var kept = [];
     for (var i = 0; i < lines.length; i++) {
@@ -1925,7 +1937,40 @@
     time: { min: 0, max: 1, ret: TY_INT, sig: 'time(NULL)' },
     atoi: { min: 1, max: 1, ret: TY_INT, sig: 'atoi("123")' },
     toupper: { min: 1, max: 1, ret: TY_INT, sig: 'toupper(字符)' },
-    tolower: { min: 1, max: 1, ret: TY_INT, sig: 'tolower(字符)' }
+    tolower: { min: 1, max: 1, ret: TY_INT, sig: 'tolower(字符)' },
+    sprintf: { min: 2, max: 99, ret: TY_INT, sig: 'sprintf(目标, "格式", 值…)' },
+    strncmp: { min: 3, max: 3, ret: TY_INT, sig: 'strncmp(a, b, n)' },
+    strncpy: { min: 3, max: 3, ret: TY_PTR_CHAR, sig: 'strncpy(目标, 来源, n)' },
+    strncat: { min: 3, max: 3, ret: TY_PTR_CHAR, sig: 'strncat(目标, 来源, n)' },
+    strchr: { min: 2, max: 2, ret: TY_PTR_CHAR, sig: 'strchr(字符串, 字符)' },
+    strstr: { min: 2, max: 2, ret: TY_PTR_CHAR, sig: 'strstr(大字符串, 小字符串)' },
+    isalpha: { min: 1, max: 1, ret: TY_INT, sig: 'isalpha(字符)' },
+    isdigit: { min: 1, max: 1, ret: TY_INT, sig: 'isdigit(字符)' },
+    isalnum: { min: 1, max: 1, ret: TY_INT, sig: 'isalnum(字符)' },
+    isspace: { min: 1, max: 1, ret: TY_INT, sig: 'isspace(字符)' },
+    isupper: { min: 1, max: 1, ret: TY_INT, sig: 'isupper(字符)' },
+    islower: { min: 1, max: 1, ret: TY_INT, sig: 'islower(字符)' },
+    ispunct: { min: 1, max: 1, ret: TY_INT, sig: 'ispunct(字符)' },
+    sin: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'sin(弧度)' },
+    cos: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'cos(弧度)' },
+    tan: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'tan(弧度)' },
+    asin: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'asin(x)' },
+    acos: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'acos(x)' },
+    atan: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'atan(x)' },
+    atan2: { min: 2, max: 2, ret: TY_DOUBLE, sig: 'atan2(y, x)' },
+    exp: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'exp(x)' },
+    log: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'log(x)' },
+    log10: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'log10(x)' },
+    log2: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'log2(x)' },
+    cbrt: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'cbrt(x)' },
+    trunc: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'trunc(x)' },
+    fmin: { min: 2, max: 2, ret: TY_DOUBLE, sig: 'fmin(a, b)' },
+    fmax: { min: 2, max: 2, ret: TY_DOUBLE, sig: 'fmax(a, b)' },
+    hypot: { min: 2, max: 2, ret: TY_DOUBLE, sig: 'hypot(a, b)' },
+    isnan: { min: 1, max: 1, ret: TY_INT, sig: 'isnan(x)' },
+    isinf: { min: 1, max: 1, ret: TY_INT, sig: 'isinf(x)' },
+    labs: { min: 1, max: 1, ret: TY_INT, sig: 'labs(n)' },
+    atof: { min: 1, max: 1, ret: TY_DOUBLE, sig: 'atof("3.14")' }
   };
 
   var BUILTIN_SET = new Set(Object.keys(BUILTIN_INFO));
@@ -2077,20 +2122,142 @@
         var c2 = this.toInt(args[0], node.args[0], 'tolower 的参数');
         return c2 >= 65 && c2 <= 90 ? c2 + 32 : c2;
       }
+      case 'sprintf': return this.doSprintf(node, args);
+      case 'strncmp': {
+        var na = this.toCString(args[0], node.args[0], 'strncmp 的参数');
+        var nb = this.toCString(args[1], node.args[1], 'strncmp 的参数');
+        var nn = this.toInt(args[2], node.args[2], 'strncmp 的 n');
+        if (nn < 0) throw CError('第 ' + node.line + ' 行：strncmp 的 n 不能是负数', node.line);
+        var lim = Math.min(nn, na.length, nb.length);
+        for (var si = 0; si < lim; si++) {
+          var ca = na.charCodeAt(si), cb = nb.charCodeAt(si);
+          if (ca !== cb) return ca < cb ? -1 : 1;
+        }
+        if (nn <= lim) return 0;
+        return na.length === nb.length ? 0 : (na.length < nb.length ? -1 : 1);
+      }
+      case 'strncpy': {
+        var viewN = this.writableString(args[0], node, 'strncpy');
+        var srcN = this.toCString(args[1], node.args[1], 'strncpy 的来源');
+        var nN = this.toInt(args[2], node.args[2], 'strncpy 的 n');
+        if (nN < 0) throw CError('第 ' + node.line + ' 行：strncpy 的 n 不能是负数', node.line);
+        if (viewN.start + nN > viewN.cells.length) {
+          throw CError('第 ' + node.line + ' 行：strncpy 要复制 ' + nN + ' 个字符，目标数组放不下', node.line,
+            '目标数组总共 ' + viewN.cells.length + ' 个位置，从第 ' + viewN.start + ' 个开始只剩 ' + (viewN.cells.length - viewN.start) + ' 个。');
+        }
+        for (var ci = 0; ci < nN; ci++) {
+          viewN.cells[viewN.start + ci].value = ci < srcN.length ? srcN.charCodeAt(ci) : 0;
+        }
+        if (srcN.length >= nN) {
+          this.warn('strncpy 在来源字符串长度 >= n 时不会自动补 \\0',
+            '如果后面要用 %s 打印它，记得自己补一个 \\0，或者把 n 写大一点（并确保数组够大）。');
+        }
+        return args[0];
+      }
+      case 'strncat': {
+        var viewA = this.writableString(args[0], node, 'strncat');
+        var srcA = this.toCString(args[1], node.args[1], 'strncat 的来源');
+        var nA = this.toInt(args[2], node.args[2], 'strncat 的 n');
+        if (nA < 0) throw CError('第 ' + node.line + ' 行：strncat 的 n 不能是负数', node.line);
+        var endA = viewA.start;
+        while (endA < viewA.cells.length && viewA.cells[endA].value !== 0) endA++;
+        if (endA >= viewA.cells.length) {
+          throw CError('第 ' + node.line + ' 行：strncat 的第一个字符串没有结尾的 \\0', node.line);
+        }
+        var take = Math.min(nA, srcA.length);
+        if (endA + take + 1 > viewA.cells.length) {
+          throw CError('第 ' + node.line + ' 行：strncat 要追加 ' + take + ' 个字符，目标数组放不下', node.line,
+            '目标数组只剩 ' + (viewA.cells.length - endA - 1) + ' 个位置可放字符。');
+        }
+        for (var ai = 0; ai < take; ai++) viewA.cells[endA + ai].value = srcA.charCodeAt(ai);
+        viewA.cells[endA + take].value = 0;
+        return args[0];
+      }
+      case 'strchr': {
+        var svC = args[0];
+        var cellsC = null, startC = 0;
+        if (svC && svC.isPtr) { cellsC = svC.cells; startC = svC.index; }
+        else if (svC && svC.isArray) { cellsC = svC.cells; startC = 0; }
+        if (!cellsC) throw CError('第 ' + node.line + ' 行：strchr 的第一个参数需要字符串', node.line);
+        var codeC = this.toInt(args[1], node.args[1], 'strchr 的字符');
+        if (codeC === 0) {
+          var endC = startC;
+          while (endC < cellsC.length && cellsC[endC].value !== 0) endC++;
+          return new PtrVal(tyPtr(TY_CHAR), cellsC, endC);
+        }
+        for (var chC = startC; chC < cellsC.length; chC++) {
+          if (cellsC[chC].value === codeC) {
+            var foundC = new PtrVal(tyPtr(TY_CHAR), cellsC, chC);
+            foundC.label = 'strchr';
+            return foundC;
+          }
+          if (cellsC[chC].value === 0) break;
+        }
+        return null;
+      }
+      case 'strstr': {
+        var hay = this.toCString(args[0], node.args[0], 'strstr 的大字符串');
+        var needle = this.toCString(args[1], node.args[1], 'strstr 的小字符串');
+        var idxS = hay.indexOf(needle);
+        if (idxS < 0) return null;
+        var cellsS = null, startS = 0;
+        if (args[0] && args[0].isPtr) { cellsS = args[0].cells; startS = args[0].index; }
+        else if (args[0] && args[0].isArray) { cellsS = args[0].cells; startS = 0; }
+        if (!cellsS) return null;
+        var foundS = new PtrVal(tyPtr(TY_CHAR), cellsS, startS + idxS);
+        foundS.label = 'strstr';
+        return foundS;
+      }
+      case 'isalpha': return this.isCharClass(args[0], node, 'isalpha') ? 1 : 0;
+      case 'isdigit': { var d0 = this.toInt(args[0], node.args[0], 'isdigit 的参数'); return d0 >= 48 && d0 <= 57 ? 1 : 0; }
+      case 'isalnum': return (this.isCharClass(args[0], node, 'isalnum') || (function (c) { return c >= 48 && c <= 57; })(this.toInt(args[0], node.args[0], 'isalnum 的参数'))) ? 1 : 0;
+      case 'isspace': { var sp = this.toInt(args[0], node.args[0], 'isspace 的参数'); return (sp === 32 || sp === 9 || sp === 10 || sp === 11 || sp === 12 || sp === 13) ? 1 : 0; }
+      case 'isupper': { var up = this.toInt(args[0], node.args[0], 'isupper 的参数'); return up >= 65 && up <= 90 ? 1 : 0; }
+      case 'islower': { var lo = this.toInt(args[0], node.args[0], 'islower 的参数'); return lo >= 97 && lo <= 122 ? 1 : 0; }
+      case 'ispunct': {
+        var pu = this.toInt(args[0], node.args[0], 'ispunct 的参数');
+        var printable = pu >= 33 && pu <= 126;
+        var alnum = (pu >= 48 && pu <= 57) || (pu >= 65 && pu <= 90) || (pu >= 97 && pu <= 122);
+        return printable && !alnum ? 1 : 0;
+      }
+      case 'sin': return Math.sin(this.toNumber(args[0], node.args[0], 'sin 的参数'));
+      case 'cos': return Math.cos(this.toNumber(args[0], node.args[0], 'cos 的参数'));
+      case 'tan': return Math.tan(this.toNumber(args[0], node.args[0], 'tan 的参数'));
+      case 'asin': return Math.asin(this.toNumber(args[0], node.args[0], 'asin 的参数'));
+      case 'acos': return Math.acos(this.toNumber(args[0], node.args[0], 'acos 的参数'));
+      case 'atan': return Math.atan(this.toNumber(args[0], node.args[0], 'atan 的参数'));
+      case 'atan2': return Math.atan2(this.toNumber(args[0], node.args[0], 'atan2 的参数'), this.toNumber(args[1], node.args[1], 'atan2 的参数'));
+      case 'exp': return Math.exp(this.toNumber(args[0], node.args[0], 'exp 的参数'));
+      case 'log': return Math.log(this.toNumber(args[0], node.args[0], 'log 的参数'));
+      case 'log10': return Math.log10(this.toNumber(args[0], node.args[0], 'log10 的参数'));
+      case 'log2': return Math.log2(this.toNumber(args[0], node.args[0], 'log2 的参数'));
+      case 'cbrt': return Math.cbrt(this.toNumber(args[0], node.args[0], 'cbrt 的参数'));
+      case 'trunc': return Math.trunc(this.toNumber(args[0], node.args[0], 'trunc 的参数'));
+      case 'fmin': return Math.min(this.toNumber(args[0], node.args[0], 'fmin 的参数'), this.toNumber(args[1], node.args[1], 'fmin 的参数'));
+      case 'fmax': return Math.max(this.toNumber(args[0], node.args[0], 'fmax 的参数'), this.toNumber(args[1], node.args[1], 'fmax 的参数'));
+      case 'hypot': return Math.hypot(this.toNumber(args[0], node.args[0], 'hypot 的参数'), this.toNumber(args[1], node.args[1], 'hypot 的参数'));
+      case 'isnan': return Number.isNaN(this.toNumber(args[0], node.args[0], 'isnan 的参数')) ? 1 : 0;
+      case 'isinf': return !Number.isFinite(this.toNumber(args[0], node.args[0], 'isinf 的参数')) ? 1 : 0;
+      case 'labs': return Math.abs(this.toInt(args[0], node.args[0], 'labs 的参数'));
+      case 'atof': {
+        var at = /^\s*([+\-]?(?:[0-9]+\.?[0-9]*|\.[0-9]+)(?:[eE][+\-]?[0-9]+)?)/.exec(this.toCString(args[0], node.args[0], 'atof 的参数'));
+        return at ? parseFloat(at[1]) : 0;
+      }
     }
     throw CError('第 ' + node.line + ' 行：还不支持函数 ' + name, node.line);
   };
 
+  Interpreter.prototype.isCharClass = function (v, node, name) {
+    var c = this.toInt(v, node && node.args ? node.args[0] : null, name + ' 的参数');
+    return (c >= 65 && c <= 90) || (c >= 97 && c <= 122);
+  };
+
   // ---------- printf ----------
 
-  Interpreter.prototype.doPrintf = function (node, args) {
-    if (typeof args[0] === 'number' || (args[0] && args[0].isPtr === false && !args[0].isArray && typeof args[0] !== 'object')) {
-      throw CError('第 ' + node.line + ' 行：printf 的第一个参数应该是「格式字符串」', node.line,
-        '要写成 printf("格式", 值); 例如 printf("我今年 %d 岁\\n", age); 只打印数字也要写成 printf("%d\\n", age);。');
-    }
-    var fmt = this.toCString(args[0], node.args[0], 'printf 的格式字符串');
+  Interpreter.prototype.formatArgs = function (node, fmtValue, values) {
+    var fmt = this.toCString(fmtValue, node, '格式字符串');
     var out = '';
-    var argi = 1;
+    var argi = 0;
     var used = 0;
     var i = 0;
     while (i < fmt.length) {
@@ -2120,19 +2287,39 @@
           '常用的是 %d（整数）、%f（小数）、%c（字符）、%s（字符串）、%%（百分号本身）。');
       }
       i++;
-      if (argi >= args.length) {
+      if (argi >= values.length) {
         throw CError('第 ' + node.line + ' 行：格式里有 %' + conv + '，但后面没有给出对应的值', node.line,
           '格式字符串里有几个 %，后面就要跟几个值：printf("%d 和 %d", a, b);。');
       }
-      var v = args[argi++];
+      var v = values[argi++];
       used++;
       out += this.formatOne(conv, v, flags, widthText ? parseInt(widthText, 10) : 0, prec, node);
     }
-    if (args.length - 1 > used) {
-      this.warn('printf 的格式字符串里只有 ' + used + ' 个 %，但后面给了 ' + (args.length - 1) + ' 个值',
+    if (values.length > used) {
+      this.warn('格式字符串里只有 ' + used + ' 个 %，但后面给了 ' + values.length + ' 个值',
         '多出来的值不会被打印出来。检查一下是不是漏写了 %d / %s 之类的格式符。');
     }
+    return out;
+  };
+
+  Interpreter.prototype.doPrintf = function (node, args) {
+    if (typeof args[0] === 'number' || (args[0] && args[0].isPtr === false && !args[0].isArray && typeof args[0] !== 'object')) {
+      throw CError('第 ' + node.line + ' 行：printf 的第一个参数应该是「格式字符串」', node.line,
+        '要写成 printf("格式", 值); 例如 printf("我今年 %d 岁\\n", age); 只打印数字也要写成 printf("%d\\n", age);。');
+    }
+    var out = this.formatArgs(node, args[0], args.slice(1));
     this.print(out);
+    return out.length;
+  };
+
+  Interpreter.prototype.doSprintf = function (node, args) {
+    if (typeof args[1] === 'number') {
+      throw CError('第 ' + node.line + ' 行：sprintf 的第二个参数应该是「格式字符串」', node.line,
+        '要写成 sprintf(目标数组, "格式", 值); 例如 sprintf(buf, "%d", 42);。');
+    }
+    var out = this.formatArgs(node, args[1], args.slice(2));
+    var view = this.writableString(args[0], node, 'sprintf');
+    this.writeString(view, out, node, 'sprintf');
     return out.length;
   };
 
@@ -2162,6 +2349,8 @@
     }
     if (conv === 'f' || conv === 'F') {
       var f = this.toNumber(v, node, 'printf 的参数');
+      if (Number.isNaN(f)) return padOut('nan', width, flags);
+      if (!Number.isFinite(f)) return padOut(f < 0 ? '-inf' : 'inf', width, flags);
       var ps = prec === null ? 6 : prec;
       var fs = f.toFixed(ps);
       if (/^-/.test(fs)) return padOut(fs, width, flags.replace('0', '0'));

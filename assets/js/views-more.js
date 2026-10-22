@@ -396,6 +396,18 @@
     c2.appendChild(ol);
     host.appendChild(c2);
 
+    var c2b = el('div', 'card');
+    c2b.appendChild(el('h3', null, '🧭 流程图工坊：写代码之前先画图'));
+    c2b.appendChild(el('p', null, '很多人写代码时迷茫，是因为「还没想清楚就先动手」。流程图工坊给你一块画布：用椭圆表示开始/结束、矩形表示做一件事、菱形表示判断（两条出口标「是 / 否」）、平行四边形表示输入输出，再用箭头连起来。'));
+    c2b.appendChild(el('p', null, '画完可以点「从我的流程图生成」，它会把你画的东西变成一份「思路提纲」和一段带注释的 C 代码骨架；还准备了 6 个模板（判断及格、1~100 求和、三数最大值、判断素数、九九乘法表、机器人浇水）。流程图会自动存在浏览器里，也能导出 PNG。'));
+    host.appendChild(c2b);
+
+    var c2c = el('div', 'card');
+    c2c.appendChild(el('h3', null, '📚 C 函数手册：遇到不会用的函数就来查'));
+    c2c.appendChild(el('p', null, '手册收录了 16 个头文件、108 个函数与常量：stdio.h、stdlib.h、string.h、math.h、ctype.h、time.h、limits.h、stdbool.h、stdint.h、stddef.h、assert.h、float.h、errno.h、conio.h……每个函数都写清楚原型、作用、参数、返回值、常见坑和一段可以运行的示例。'));
+    c2c.appendChild(el('p', null, '标着「✅ 本站可直接运行」的示例，点一下就能打开到练习场真的跑起来；标着「⚠️ 需要真编译器」的（文件、内存、结构体等）会告诉你为什么需要真正的 gcc。手册里还有 printf / scanf 的格式符速查表、角度弧度换算表和整数范围表。'));
+    host.appendChild(c2c);
+
     var c3 = el('div', 'card');
     c3.appendChild(el('h3', null, '技术说明（它会诚实地告诉你局限）'));
     c3.appendChild(el('p', null, '本站的代码运行器是一个用 JavaScript 从零写出来的「迷你 C 解释器」，专门为零基础教学服务，它的错误提示全部是中文，还会标出行号和原因。它支持：'));
