@@ -21,18 +21,38 @@ function findGcc() {
 
 const sandbox = { console };
 vm.createContext(sandbox);
-for (const f of ['assets/js/interpreter.js', 'assets/js/grader.js', 'assets/js/content-drills-code.js']) {
+for (const f of ['assets/js/interpreter.js', 'assets/js/grader.js', 'assets/js/content-drills-code.js', 'assets/js/content-drills-ladder-1.js', 'assets/js/content-drills-ladder-2.js', 'assets/js/content-drills-ladder-3.js']) {
   vm.runInContext(fs.readFileSync(path.join(ROOT, f), 'utf8'), sandbox, { filename: f });
 }
 const CC = sandbox.CC;
 const PROBLEMS = CC.CODE_DRILLS || [];
 const Grade = CC.Grade;
 const HEADERS = ['stdio.h', 'string.h', 'stdlib.h', 'ctype.h', 'math.h', '综合'];
+const SINGLE_FUNCTIONS = ['printf','scanf','sprintf','strlen','strcpy','strcat','strcmp','strchr','strstr','strncmp','strncpy','atoi','atof','abs','isalpha','isdigit','isspace','isupper','islower','toupper','tolower','sqrt','pow','fabs','floor','ceil','round','fmin','fmax','hypot'];
 const gcc = findGcc();
 const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'fenmao-code-drills-'));
 
 describe('在线编程题：题库结构', () => {
-  test('至少 20 道完整编程题', () => ok(PROBLEMS.length >= 20, '只有 ' + PROBLEMS.length + ' 道'));
+  test('训练路线数量正确', () => {
+    ok(PROBLEMS.filter(p => p.stage === 'single').length >= 90, '单函数题不足');
+    ok(PROBLEMS.filter(p => p.stage === 'bridge').length >= 12, '组合过渡题不足');
+    ok(PROBLEMS.filter(p => p.stage === 'mixed').length >= 20, '综合题不足');
+  });
+  test('30 个函数每个都有至少 3 道独立专练', () => {
+    SINGLE_FUNCTIONS.forEach(fn => {
+      const list = PROBLEMS.filter(p => p.stage === 'single' && p.target === fn);
+      ok(list.length >= 3, fn + ' 只有 ' + list.length + ' 道专练');
+      list.forEach(p => ok(p.functions.length === 1 && p.functions[0] === fn, p.id + ' 必须只标记一个目标函数'));
+    });
+  });
+  test('起始代码不预写 #include 或 main', () => {
+    PROBLEMS.forEach(p => {
+      ok(!p.starter.includes('#include'), p.id + ' 的起始代码泄露了 #include');
+      ok(!/\bmain\s*\(/.test(p.starter), p.id + ' 的起始代码预写了 main');
+      ok(p.starter.trim() === '', p.id + ' 应该是完全空白的起始代码');
+    });
+  });
+  test('至少 120 道完整编程题', () => ok(PROBLEMS.length >= 120, '只有 ' + PROBLEMS.length + ' 道'));
   test('题目 id 唯一', () => {
     const seen = new Set();
     PROBLEMS.forEach(p => { ok(!seen.has(p.id), '重复 id：' + p.id); seen.add(p.id); });
@@ -53,7 +73,7 @@ describe('在线编程题：题库结构', () => {
       ok(Array.isArray(p.examples) && p.examples.length >= 1, p.id + ' 缺少公开样例');
       ok(Array.isArray(p.tests) && p.tests.length >= 4, p.id + ' 测试点少于 4 个');
       ok(Array.isArray(p.hints) && p.hints.length >= 2, p.id + ' 提示少于 2 条');
-      ok(typeof p.starter === 'string' && p.starter.includes('main'), p.id + ' 缺少起始代码');
+      ok(typeof p.starter === 'string', p.id + ' 缺少起始代码字段');
       ok(typeof p.solution === 'string' && p.solution.includes('main'), p.id + ' 缺少参考答案');
       p.tests.forEach((t, i) => {
         ok(typeof t.stdin === 'string', p.id + ' 测试点 ' + i + ' 缺少 stdin');

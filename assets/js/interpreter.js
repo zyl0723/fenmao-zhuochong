@@ -2093,7 +2093,10 @@
       case 'pow': return Math.pow(this.toNumber(args[0], node.args[0], 'pow 的参数'), this.toNumber(args[1], node.args[1], 'pow 的参数'));
       case 'floor': return Math.floor(this.toNumber(args[0], node.args[0], 'floor 的参数'));
       case 'ceil': return Math.ceil(this.toNumber(args[0], node.args[0], 'ceil 的参数'));
-      case 'round': return Math.round(this.toNumber(args[0], node.args[0], 'round 的参数'));
+      case 'round': {
+        var roundValue = this.toNumber(args[0], node.args[0], 'round 的参数');
+        return roundValue < 0 ? -Math.round(-roundValue) : Math.round(roundValue);
+      }
       case 'fmod': return this.toNumber(args[0], node.args[0], 'fmod 的参数') % this.toNumber(args[1], node.args[1], 'fmod 的参数');
       case 'rand': {
         this.randState = (Math.imul(this.randState, 1103515245) + 12345) & 0x7fffffff;

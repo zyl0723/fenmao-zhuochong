@@ -44,6 +44,8 @@
   D.codeQueue = [];
   D.codeIndex = 0;
   D.codeOnlyWrong = false;
+  D.codeTrack = 'single';
+  D.codeTarget = 'all';
 
   D.build = function () {
     if (this.built) return;
@@ -64,6 +66,43 @@
     tabs.appendChild(UI.el('span', 'drills-mode-note', '编程题：写代码 → 跑样例 → 提交隐藏测试点'));
     bar.insertBefore(tabs, bar.children[1] || null);
     this.drillIntro = bar.querySelector('.tiny.muted');
+    var route = UI.el('div', 'code-route-filter');
+    var routeTitle = UI.el('div', 'code-route-title');
+    routeTitle.appendChild(UI.el('strong', null, '训练路线'));
+    routeTitle.appendChild(UI.el('span', 'tiny muted', '先单函数，再组合，最后综合'));
+    route.appendChild(routeTitle);
+    var routeBtns = UI.el('div', 'drills-chips');
+    this.routeBtns = {};
+    [['single','① 单函数专练'],['bridge','② 组合过渡'],['mixed','③ 综合挑战'],['all','全部']].forEach(function (p) {
+      var b = UI.el('button', 'drills-chip small' + (self.codeTrack === p[0] ? ' on' : ''), p[1]);
+      b.type = 'button';
+      b.addEventListener('click', function () {
+        self.codeTrack = p[0];
+        self.codeTarget = 'all';
+        self.startCodeQueue(false);
+        self.syncCodeFilters();
+        self.renderCodeQuestion();
+        self.renderStats();
+      });
+      self.routeBtns[p[0]] = b;
+      routeBtns.appendChild(b);
+    });
+    route.appendChild(routeBtns);
+    var fnRow = UI.el('div', 'code-fn-filter');
+    fnRow.appendChild(UI.el('label', null, '练哪个函数'));
+    this.codeFnSelect = UI.el('select', 'code-fn-select');
+    this.codeFnSelect.addEventListener('change', function () {
+      self.codeTarget = self.codeFnSelect.value;
+      self.startCodeQueue(false);
+      self.renderCodeQuestion();
+      self.renderStats();
+    });
+    fnRow.appendChild(this.codeFnSelect);
+    route.appendChild(fnRow);
+    route.classList.add('hidden');
+    this.codeRoute = route;
+    bar.insertBefore(route, this.drillIntro || null);
+    this.updateCodeTargets();
   };
 
   D.setMode = function (mode) {
@@ -71,6 +110,7 @@
     this.mode = mode;
     if (this.choiceTab) this.choiceTab.classList.toggle('on', mode === 'choice');
     if (this.codeTab) this.codeTab.classList.toggle('on', mode === 'code');
+    if (this.codeRoute) this.codeRoute.classList.toggle('hidden', mode !== 'code');
     if (this.drillIntro) {
       this.drillIntro.textContent = mode === 'code'
         ? 'PTA 风格工作台：写完整 C 程序，样例可自测，提交后会跑多组隐藏测试点。每道题都有提示和参考答案。'
@@ -91,10 +131,38 @@
   D.filteredCode = function () {
     var self = this;
     return (CC.CODE_DRILLS || []).filter(function (d) {
+      if (self.codeTrack !== 'all' && d.stage !== self.codeTrack) return false;
+      if (self.codeTarget !== 'all' && d.target !== self.codeTarget) return false;
       if (self.header !== 'all' && d.header !== self.header) return false;
       if (self.level && d.level !== self.level) return false;
       return true;
     });
+  };
+
+  D.updateCodeTargets = function () {
+    if (!this.codeFnSelect) return;
+    var all = CC.CODE_DRILLS || [];
+    var solved = codeState().solved;
+    var names = [];
+    all.filter(function (d) { return d.stage === 'single'; }).forEach(function (d) { if (names.indexOf(d.target) < 0) names.push(d.target); });
+    UI.clear(this.codeFnSelect);
+    var allOpt = UI.el('option', null, '全部函数（' + all.filter(function (d) { return d.stage === 'single'; }).length + ' 题）');
+    allOpt.value = 'all';
+    this.codeFnSelect.appendChild(allOpt);
+    names.forEach(function (fn) {
+      var list = all.filter(function (d) { return d.stage === 'single' && d.target === fn; });
+      var done = list.filter(function (d) { return solved[d.id]; }).length;
+      var opt = UI.el('option', null, fn + ' (' + done + '/' + list.length + ')');
+      opt.value = fn;
+      this.codeFnSelect.appendChild(opt);
+    }, this);
+    this.codeFnSelect.value = this.codeTarget;
+    this.codeFnSelect.disabled = this.codeTrack !== 'single';
+  };
+
+  D.syncCodeFilters = function () {
+    if (this.routeBtns) for (var k in this.routeBtns) this.routeBtns[k].classList.toggle('on', k === this.codeTrack);
+    this.updateCodeTargets();
   };
 
   D.startCodeQueue = function (random) {
@@ -104,6 +172,7 @@
     this.codeIndex = 0;
     this.codeOnlyWrong = false;
     this.syncChips();
+    this.syncCodeFilters();
   };
 
   D.startQueue = function (random) {
@@ -164,6 +233,9 @@
     var st = codeState();
     var solved = !!st.solved[d.id];
     var meta = UI.el('div', 'drills-meta');
+    if (d.stage === 'single') meta.appendChild(UI.el('span', 'tag' + (solved ? ' done' : ''), '单函数 · ' + d.target));
+    else if (d.stage === 'bridge') meta.appendChild(UI.el('span', 'tag', '组合过渡'));
+    else meta.appendChild(UI.el('span', 'tag', '综合挑战'));
     meta.appendChild(UI.el('span', 'tag', d.header));
     meta.appendChild(UI.el('span', 'tag star', stars(d.level)));
     meta.appendChild(UI.el('span', 'tag' + (solved ? ' done' : ''), solved ? '已通关 ✓' : '待挑战'));
@@ -244,15 +316,16 @@
 
     var editorHost = UI.el('div', 'code-drill-editor');
     work.appendChild(editorHost);
-    var draft = CC.CodeStore.get('code-drill:' + d.id, d.starter);
+    var draft = CC.CodeStore.get('code-drill-v2:' + d.id, d.starter);
     var editor = new CC.CodeEditor(editorHost, {
       value: draft,
       fileName: d.id + '.c',
       minHeight: 330,
       onRun: function () { doRun(); },
-      onChange: function (code) { CC.CodeStore.set('code-drill:' + d.id, code); }
+      onChange: function (code) { CC.CodeStore.set('code-drill-v2:' + d.id, code); }
     });
     this.codeEditor = editor;
+    editor.textarea.placeholder = '从第一行开始写：头文件、main、变量、输入输出。起始区不会替你写 #include。';
 
     var stdinHead = UI.el('div', 'code-drill-stdin-head');
     stdinHead.appendChild(UI.el('label', null, '程序输入（可以改成自己的数据）'));
@@ -432,7 +505,7 @@
     resetBtn.addEventListener('click', function () {
       if (!root.confirm('把这道题的代码恢复成起始模板？')) return;
       editor.setValue(d.starter);
-      CC.CodeStore.set('code-drill:' + d.id, d.starter);
+      CC.CodeStore.set('code-drill-v2:' + d.id, d.starter);
     });
   };
 
@@ -450,6 +523,9 @@
     if (statRows[1] && statRows[1].firstChild) statRows[1].firstChild.textContent = '选择题正确率';
     this.statsEl.appendChild(UI.el('div', 'drills-stat-divider'));
     [['编程题通关', solved + ' / ' + total],
+      ['单函数专练', Object.keys(st.solved).filter(function (id) { var q = byId(id); return q && q.stage === 'single'; }).length + ' / 90'],
+      ['组合过渡', Object.keys(st.solved).filter(function (id) { var q = byId(id); return q && q.stage === 'bridge'; }).length + ' / 12'],
+      ['综合挑战', Object.keys(st.solved).filter(function (id) { var q = byId(id); return q && q.stage === 'mixed'; }).length + ' / 24'],
       ['编程提交', (st.attempts || 0) + ' 次'],
       ['编程错题', wrong + ' 道']].forEach(function (r) {
       var row = UI.el('div', 'kv');
@@ -458,6 +534,7 @@
       this.statsEl.appendChild(row);
     }, this);
 
+    this.updateCodeTargets();
     var codeWrongIds = Object.keys(st.wrong);
     if (!codeWrongIds.length) return;
     var placeholder = this.wrongEl && this.wrongEl.querySelector('.pz-small');

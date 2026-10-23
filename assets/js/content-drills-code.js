@@ -1,6 +1,6 @@
 /*!
  * 粉猫捉虫 · 函数闯关：在线编程题（PTA 风格）
- * 24 道完整编程题，每题提供题面、输入输出格式、样例、隐藏测试点、提示与参考答案。
+ * 24 道综合挑战题；另有 90 道单函数专练和 12 道组合过渡题，见 content-drills-ladder-1~3.js。
  * 许可：MIT（见仓库根目录 LICENSE）
  */
 (function (root) {
@@ -24,7 +24,7 @@
         { name: '零度', stdin: '0\n', expect: '当前温度：0℃\n' },
         { name: '高温', stdin: '36\n', expect: '当前温度：36℃\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    int t;\n    // TODO: 读入 t，然后按格式输出\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['读取整数：scanf("%d", &t);', '输出：printf("当前温度：%d℃\\n", t);'],
       solution: '#include <stdio.h>\n\nint main() {\n    int t;\n    scanf("%d", &t);\n    printf("当前温度：%d℃\\n", t);\n    return 0;\n}\n',
       explain: 'scanf 把键盘输入写进变量，printf 再把变量替换进格式字符串。'
@@ -45,7 +45,7 @@
         { name: '含 0', stdin: '0 0 1\n', expect: '总数：1\n平均：0.33\n' },
         { name: '三袋大数', stdin: '100 99 98\n', expect: '总数：297\n平均：99.00\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    int a, b, c;\n    // TODO: 读入三个数，算总和与平均值\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['总和是 a + b + c。', '平均值要写成 (a + b + c) / 3.0，不能除以整数 3。'],
       solution: '#include <stdio.h>\n\nint main() {\n    int a, b, c;\n    scanf("%d %d %d", &a, &b, &c);\n    int sum = a + b + c;\n    printf("总数：%d\\n", sum);\n    printf("平均：%.2f\\n", sum / 3.0);\n    return 0;\n}\n',
       explain: '整数除以整数会丢掉小数；把除数写成 3.0，整个除法就会按 double 计算。'
@@ -66,7 +66,7 @@
         { name: '超过一天', stdin: '90061\n', expect: '25:01:01\n' },
         { name: '整一小时', stdin: '3600\n', expect: '01:00:00\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    int total;\n    // TODO: 拆成小时、分钟、秒\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['小时 = total / 3600；分钟 = (total % 3600) / 60；秒 = total % 60。', 'printf("%02d:%02d:%02d\\n", h, m, s); 中的 02 表示补零到两位。'],
       solution: '#include <stdio.h>\n\nint main() {\n    int total;\n    scanf("%d", &total);\n    int h = total / 3600;\n    int m = (total % 3600) / 60;\n    int s = total % 60;\n    printf("%02d:%02d:%02d\\n", h, m, s);\n    return 0;\n}\n',
       explain: '/ 取整、% 取余，正好可以把一个大单位拆成小单位。'
@@ -87,7 +87,7 @@
         { name: '整一百', stdin: '0 100\n', expect: '找零：100 元\n最少纸币：5 张\n' },
         { name: '不需要找零', stdin: '50 50\n', expect: '找零：0 元\n最少纸币：0 张\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    int price, paid;\n    // TODO: 先算 change，再贪心地用大面额纸币\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['先算 change = paid - price。', '从 20 元开始：每次都拿尽可能多张，再对剩余金额继续处理。'],
       solution: '#include <stdio.h>\n\nint main() {\n    int price, paid;\n    scanf("%d %d", &price, &paid);\n    int change = paid - price;\n    int rest = change;\n    int count = 0;\n    count += rest / 20; rest %= 20;\n    count += rest / 10; rest %= 10;\n    count += rest / 5;  rest %= 5;\n    count += rest;\n    printf("找零：%d 元\\n", change);\n    printf("最少纸币：%d 张\\n", count);\n    return 0;\n}\n',
       explain: '这是贪心算法：能拿大面额就拿大面额。本题的面额 20、10、5、1 正好保证贪心得到最少张数。'
@@ -108,7 +108,7 @@
         { name: '零数量', stdin: '毛线球 0 4.25\n', expect: '商品：毛线球\n数量：0\n金额：0.00\n' },
         { name: '多件商品', stdin: '猫薄荷 7 3.2\n', expect: '商品：猫薄荷\n数量：7\n金额：22.40\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    char name[31];\n    int qty;\n    double price;\n    // TODO: 读入并计算总金额\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['商品名是字符串，用 %s 读取；数量用 %d；单价用 %lf 读取到 double。', '金额 = qty * price。'],
       solution: '#include <stdio.h>\n\nint main() {\n    char name[31];\n    int qty;\n    double price;\n    scanf("%s %d %lf", name, &qty, &price);\n    printf("商品：%s\\n", name);\n    printf("数量：%d\\n", qty);\n    printf("金额：%.2f\\n", qty * price);\n    return 0;\n}\n',
       explain: 'scanf 读字符串时，数组名 name 本身就是地址，不需要再写 &name。'
@@ -129,7 +129,7 @@
         { name: '长名字', stdin: 'FenmaoZhuochong\n', expect: 'FenmaoZhuochong 有 15 个字符\n' },
         { name: '带数字', stdin: 'cat2026\n', expect: 'cat2026 有 7 个字符\n' }
       ],
-      starter: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s[100];\n    // TODO: 读入字符串并求长度\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['strlen(s) 返回字符串长度。', 'printf("%s 有 %d 个字符\\n", s, (int)strlen(s));'],
       solution: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s[100];\n    scanf("%s", s);\n    printf("%s 有 %d 个字符\\n", s, (int)strlen(s));\n    return 0;\n}\n',
       explain: 'strlen 从字符串开头数到 \\0 之前，不计入结尾的 \\0。'
@@ -150,7 +150,7 @@
         { name: '英文单词', stdin: 'coding\n', expect: 'gnidoc\n' },
         { name: '单字符', stdin: 'C\n', expect: 'C\n' }
       ],
-      starter: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s[100];\n    // TODO: 交换首尾字符\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['用 left = 0、right = strlen(s) - 1 两个下标。', '只要 left < right，就交换 s[left] 和 s[right]，然后各自向中间移动。'],
       solution: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s[100];\n    scanf("%s", s);\n    int left = 0;\n    int right = (int)strlen(s) - 1;\n    while (left < right) {\n        char t = s[left];\n        s[left] = s[right];\n        s[right] = t;\n        left++;\n        right--;\n    }\n    printf("%s\\n", s);\n    return 0;\n}\n',
       explain: '原地反转只用了常数个额外变量，是双指针的经典练习。'
@@ -171,7 +171,7 @@
         { name: '单字符', stdin: 'a\n', expect: '是回文\n' },
         { name: '区分大小写', stdin: 'Abcba\n', expect: '不是回文\n' }
       ],
-      starter: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s[100];\n    // TODO: 从两端向中间比较\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['两个下标分别从 0 和 strlen(s)-1 出发。', '一旦对应字符不同，就可以立刻判定不是回文。'],
       solution: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s[100];\n    scanf("%s", s);\n    int left = 0;\n    int right = (int)strlen(s) - 1;\n    int ok = 1;\n    while (left < right) {\n        if (s[left] != s[right]) { ok = 0; break; }\n        left++;\n        right--;\n    }\n    printf(ok ? "是回文\\n" : "不是回文\\n");\n    return 0;\n}\n',
       explain: '回文判断不需要创建反串，双指针比较就已经足够。'
@@ -192,7 +192,7 @@
         { name: '在开头', stdin: 'cat c\n', expect: '位置：0\n' },
         { name: '连续字符', stdin: 'apple p\n', expect: '位置：1\n' }
       ],
-      starter: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s[100], ch;\n    // TODO: 用 strchr 查找，再找下标\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['scanf("%s %c", s, &ch); 会先跳过空白再读字符。', 'strchr(s, ch) 找不到时返回 NULL；找到后可以从 s[0] 开始数位置。'],
       solution: '#include <stdio.h>\n#include <string.h>\n\nint main() {\n    char s[100], ch;\n    scanf("%s %c", s, &ch);\n    char *p = strchr(s, ch);\n    if (p == NULL) {\n        printf("没找到\\n");\n    } else {\n        int i = 0;\n        while (s[i] != ch) i++;\n        printf("位置：%d\\n", i);\n    }\n    return 0;\n}\n',
       explain: 'strchr 返回指向第一个匹配字符的指针；字符串下标从 0 开始。'
@@ -213,7 +213,7 @@
         { name: '只有空格', stdin: '     \n', expect: '\n' },
         { name: '无空格', stdin: 'fenmao\n', expect: 'fenmao\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    int c;\n    // TODO: 逐个读字符，跳过空格和制表符\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['getchar() 一次读一个字符，读到换行或 -1 就停止。', '只有 c != \' \' 且 c != \'\\t\' 时才 putchar(c)。'],
       solution: '#include <stdio.h>\n\nint main() {\n    int c;\n    while ((c = getchar()) != -1 && c != \'\\n\') {\n        if (c != \' \' && c != \'\\t\') putchar(c);\n    }\n    printf("\\n");\n    return 0;\n}\n',
       explain: 'getchar 的返回值是 int，这样才能同时表示普通字符和 EOF（通常是 -1）。'
@@ -234,7 +234,7 @@
         { name: '前导零', stdin: '007\n', expect: '翻倍：14\n' },
         { name: '显式正号', stdin: '+9\n', expect: '翻倍：18\n' }
       ],
-      starter: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    char text[40];\n    // TODO: 读入字符串，用 atoi 转成整数\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['先用 scanf("%s", text) 读字符串。', 'int n = atoi(text); 然后输出 n * 2。'],
       solution: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    char text[40];\n    scanf("%s", text);\n    int n = atoi(text);\n    printf("翻倍：%d\\n", n * 2);\n    return 0;\n}\n',
       explain: 'atoi 会把字符串开头的整数部分转换成 int；它不是通用的错误检查工具。'
@@ -255,7 +255,7 @@
         { name: '负数', stdin: '-5.5 2.25\n', expect: '合计：-3.25\n' },
         { name: '大数', stdin: '1000 0.99\n', expect: '合计：1000.99\n' }
       ],
-      starter: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    char a[40], b[40];\n    // TODO: 读入两个字符串并用 atof 转换\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['atof 返回 double。', 'double x = atof(a), y = atof(b); 再用 printf("%.2f", x + y)。'],
       solution: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    char a[40], b[40];\n    scanf("%s %s", a, b);\n    double x = atof(a);\n    double y = atof(b);\n    printf("合计：%.2f\\n", x + y);\n    return 0;\n}\n',
       explain: 'atof 把字符串转换成 double；和 atoi 一样，它适合教学和简单解析，不等于完整的输入校验。'
@@ -276,7 +276,7 @@
         { name: '相等', stdin: '-4 -4\n', expect: '相差：0\n' },
         { name: '一正一负', stdin: '-9 6\n', expect: '相差：15\n' }
       ],
-      starter: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int a, b;\n    // TODO: 读入两个数，输出它们差的绝对值\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['先算 a - b。', '把结果交给 abs：abs(a - b)。'],
       solution: '#include <stdio.h>\n#include <stdlib.h>\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf("相差：%d\\n", abs(a - b));\n    return 0;\n}\n',
       explain: 'abs 返回整数的绝对值；浮点数对应的是 math.h 里的 fabs。'
@@ -297,7 +297,7 @@
         { name: '全是空格', stdin: '   \n', expect: '字母：0\n数字：0\n其他：3\n' },
         { name: '混合标点', stdin: 'Hello, 2026!\n', expect: '字母：5\n数字：4\n其他：3\n' }
       ],
-      starter: '#include <stdio.h>\n#include <ctype.h>\n\nint main() {\n    int c;\n    // TODO: 用 isalpha 和 isdigit 分类\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['用 while ((c = getchar()) != -1 && c != \'\\n\') 逐个读。', 'if (isalpha(c)) letters++; else if (isdigit(c)) digits++; else others++;'],
       solution: '#include <stdio.h>\n#include <ctype.h>\n\nint main() {\n    int c;\n    int letters = 0, digits = 0, others = 0;\n    while ((c = getchar()) != -1 && c != \'\\n\') {\n        if (isalpha(c)) letters++;\n        else if (isdigit(c)) digits++;\n        else others++;\n    }\n    printf("字母：%d\\n", letters);\n    printf("数字：%d\\n", digits);\n    printf("其他：%d\\n", others);\n    return 0;\n}\n',
       explain: 'isalpha 判断字母，isdigit 判断十进制数字；它们接收的是字符编码，不是字符串。'
@@ -318,7 +318,7 @@
         { name: '已经大写', stdin: 'MiXeD!\n', expect: 'MIXED!\n' },
         { name: '保留前后空格', stdin: '  hi  \n', expect: '  HI  \n' }
       ],
-      starter: '#include <stdio.h>\n#include <ctype.h>\n\nint main() {\n    int c;\n    // TODO: 读一个字符，转大写，再输出\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['getchar 读到 -1 或换行时停止。', 'putchar(toupper(c)) 会把结果写回屏幕。'],
       solution: '#include <stdio.h>\n#include <ctype.h>\n\nint main() {\n    int c;\n    while ((c = getchar()) != -1 && c != \'\\n\') {\n        putchar(toupper(c));\n    }\n    printf("\\n");\n    return 0;\n}\n',
       explain: 'toupper 对非小写字母通常原样返回，所以不需要额外写 if 判断。'
@@ -339,7 +339,7 @@
         { name: '多个空格', stdin: '  mixEd 42 abc\n', expect: '  Mixed 42 Abc\n' },
         { name: '撇号', stdin: "o'neil   code\n", expect: "O'neil   Code\n" }
       ],
-      starter: '#include <stdio.h>\n#include <ctype.h>\n\nint main() {\n    int c;\n    int newWord = 1;\n    // TODO: 根据 newWord 决定 toupper 还是 tolower\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['遇到空格时输出空格，并把 newWord 设为 1。', '遇到字母时：newWord 为真就用 toupper，否则用 tolower，然后设 newWord = 0。', '标点也保持原样，并让当前单词继续。'],
       solution: '#include <stdio.h>\n#include <ctype.h>\n\nint main() {\n    int c;\n    int newWord = 1;\n    while ((c = getchar()) != -1 && c != \'\\n\') {\n        if (isspace(c)) {\n            putchar(c);\n            newWord = 1;\n        } else if (isalpha(c)) {\n            putchar(newWord ? toupper(c) : tolower(c));\n            newWord = 0;\n        } else {\n            putchar(c);\n            newWord = 0;\n        }\n    }\n    printf("\\n");\n    return 0;\n}\n',
       explain: 'newWord 是状态变量：它记录「现在是不是正处在一个新单词的开头」。'
@@ -360,7 +360,7 @@
         { name: '零半径', stdin: '0\n', expect: '面积：0.00\n' },
         { name: '大圆', stdin: '10\n', expect: '面积：314.16\n' }
       ],
-      starter: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    double r;\n    // TODO: 用 acos(-1.0) 求圆周率并计算面积\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['面积公式是 πr²。', '用 double pi = acos(-1.0) 取得圆周率；不要写成 r^2，^ 在 C 里是按位异或。'],
       solution: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    double r;\n    scanf("%lf", &r);\n    double pi = acos(-1.0);\n    printf("面积：%.2f\\n", pi * r * r);\n    return 0;\n}\n',
       explain: 'M_PI 并不是 ISO C 标准保证提供的宏；用 acos(-1.0) 自己求圆周率更可移植。'
@@ -381,7 +381,7 @@
         { name: '负坐标', stdin: '-1 -1 2 3\n', expect: '距离：5.000\n' },
         { name: '小数坐标', stdin: '1.5 2.5 4.5 6.5\n', expect: '距离：5.000\n' }
       ],
-      starter: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    double x1, y1, x2, y2;\n    // TODO: 计算 dx、dy，再调用 hypot\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['dx = x2 - x1，dy = y2 - y1。', 'hypot(dx, dy) 等价于 sqrt(dx*dx + dy*dy)，但更稳。'],
       solution: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    double x1, y1, x2, y2;\n    scanf("%lf %lf %lf %lf", &x1, &y1, &x2, &y2);\n    printf("距离：%.3f\\n", hypot(x2 - x1, y2 - y1));\n    return 0;\n}\n',
       explain: 'hypot 直接计算直角三角形的斜边，适合求二维距离。'
@@ -402,7 +402,7 @@
         { name: '等腰直角', stdin: '1 1\n', expect: '斜边：1.414\n' },
         { name: '另一组勾股数', stdin: '8 15\n', expect: '斜边：17.000\n' }
       ],
-      starter: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    int a, b;\n    // TODO: 计算 sqrt(a*a + b*b)\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['a*a 和 b*b 都是整数，相加后用 sqrt 会转成 double。', 'sqrt 需要 #include <math.h>。'],
       solution: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    printf("斜边：%.3f\\n", sqrt(a * a + b * b));\n    return 0;\n}\n',
       explain: 'sqrt 返回 double；用 %.3f 控制输出的小数位数。'
@@ -423,7 +423,7 @@
         { name: '两个不同根', stdin: '1 2 -3\n', expect: '根1：1.00\n根2：-3.00\n' },
         { name: '系数 2', stdin: '2 -3 1\n', expect: '根1：1.00\n根2：0.50\n' }
       ],
-      starter: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    int a, b, c;\n    // TODO: 先算判别式 d，再算两个根\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['判别式 d = b*b - 4.0*a*c。', 'r1 = (-b + sqrt(d)) / (2.0*a)，r2 把加号换减号。'],
       solution: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    int a, b, c;\n    scanf("%d %d %d", &a, &b, &c);\n    double d = b * b - 4.0 * a * c;\n    double r1 = (-b + sqrt(d)) / (2.0 * a);\n    double r2 = (-b - sqrt(d)) / (2.0 * a);\n    printf("根1：%.2f\\n", r1);\n    printf("根2：%.2f\\n", r2);\n    return 0;\n}\n',
       explain: '分母写成 2.0 * a 才能得到浮点除法；题目保证 sqrt 的参数非负。'
@@ -444,7 +444,7 @@
         { name: '含负数', stdin: '4\n-5 -1 -9 -3\n', expect: '最大：-1\n最小：-9\n总和：-18\n' },
         { name: '只有一个数', stdin: '1\n42\n', expect: '最大：42\n最小：42\n总和：42\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    int n;\n    int a[100];\n    // TODO: 读入数组，再遍历求三个结果\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['先把 a[0] 同时设为 max 和 min。', '从 i = 1 开始遍历，比较并更新；sum 从 0 开始累加。'],
       solution: '#include <stdio.h>\n\nint main() {\n    int n;\n    int a[100];\n    scanf("%d", &n);\n    for (int i = 0; i < n; i++) scanf("%d", &a[i]);\n    int max = a[0], min = a[0], sum = 0;\n    for (int i = 0; i < n; i++) {\n        if (a[i] > max) max = a[i];\n        if (a[i] < min) min = a[i];\n        sum += a[i];\n    }\n    printf("最大：%d\\n", max);\n    printf("最小：%d\\n", min);\n    printf("总和：%d\\n", sum);\n    return 0;\n}\n',
       explain: '这是数组遍历的常见模式：准备初始值，每个元素来一次就比较或累加。'
@@ -466,7 +466,7 @@
         { name: '1 不是素数', stdin: '1\n', expect: '不是素数\n' },
         { name: '大合数', stdin: '561\n', expect: '不是素数\n' }
       ],
-      starter: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    int n;\n    // TODO: 特殊处理 n < 2，然后试除到 sqrt(n)\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['先判断 if (n < 2) 不是素数。', '令 limit = (int)sqrt(n)，从 i = 2 试到 i <= limit。'],
       solution: '#include <stdio.h>\n#include <math.h>\n\nint main() {\n    int n;\n    scanf("%d", &n);\n    int prime = n >= 2;\n    int limit = (int)sqrt(n);\n    for (int i = 2; i <= limit; i++) {\n        if (n % i == 0) { prime = 0; break; }\n    }\n    printf(prime ? "是素数\\n" : "不是素数\\n");\n    return 0;\n}\n',
       explain: '如果 n 有大于 sqrt(n) 的因子，那么它一定也有一个小于 sqrt(n) 的配对因子，所以试除到这里就够了。'
@@ -487,7 +487,7 @@
         { name: '含零', stdin: '0 9\n', expect: '最大公约数：9\n' },
         { name: '更大的数', stdin: '48 36\n', expect: '最大公约数：12\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    int a, b;\n    // TODO: 用 b = a % b 交换，直到 b 为 0\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['循环条件 while (b != 0)。', 't = a % b；a = b；b = t。循环结束后 a 就是答案。'],
       solution: '#include <stdio.h>\n\nint main() {\n    int a, b;\n    scanf("%d %d", &a, &b);\n    while (b != 0) {\n        int t = a % b;\n        a = b;\n        b = t;\n    }\n    printf("最大公约数：%d\\n", a);\n    return 0;\n}\n',
       explain: '辗转相除法每次把问题变小，直到余数为 0；最后一个非零余数就是最大公约数。'
@@ -508,12 +508,13 @@
         { name: '含负数', stdin: '4\n-1 7 -5 0\n', expect: '-5 -1 0 7\n' },
         { name: '单元素', stdin: '1\n42\n', expect: '42\n' }
       ],
-      starter: '#include <stdio.h>\n\nint main() {\n    int n;\n    int a[100];\n    // TODO: 读入后用两层循环做冒泡排序\n\n    return 0;\n}\n',
+      starter: '',
       hints: ['外层 i 从 0 到 n-1，内层 j 从 0 到 n-2-i。', '如果 a[j] > a[j+1]，交换两个元素。', '输出时先打印 a[0]，后面每个数前面加一个空格。'],
       solution: '#include <stdio.h>\n\nint main() {\n    int n;\n    int a[100];\n    scanf("%d", &n);\n    for (int i = 0; i < n; i++) scanf("%d", &a[i]);\n    for (int i = 0; i < n - 1; i++) {\n        for (int j = 0; j < n - 1 - i; j++) {\n            if (a[j] > a[j + 1]) {\n                int t = a[j];\n                a[j] = a[j + 1];\n                a[j + 1] = t;\n            }\n        }\n    }\n    printf("%d", a[0]);\n    for (int i = 1; i < n; i++) printf(" %d", a[i]);\n    printf("\\n");\n    return 0;\n}\n',
       explain: '冒泡排序每轮把当前未排序部分的最大值放到末尾；时间复杂度是 O(n²)，适合入门理解。'
     }
   ];
 
+  P.forEach(function (p) { p.stage = 'mixed'; });
   CC.CODE_DRILLS = P;
 })(typeof globalThis !== 'undefined' ? globalThis : this);
